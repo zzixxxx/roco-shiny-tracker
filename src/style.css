@@ -292,7 +292,7 @@ select.input {
   inset: 0;
   background: rgba(0, 0, 0, 0.35);
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
   z-index: 100;
   backdrop-filter: blur(2px);
@@ -300,11 +300,11 @@ select.input {
 
 .modal-content {
   background: #fff;
-  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-  padding: 24px 20px calc(var(--safe-bottom) + 24px);
-  width: 100%;
-  max-width: 480px;
-  max-height: 80vh;
+  border-radius: var(--radius-xl);
+  padding: 24px 20px;
+  width: calc(100% - 40px);
+  max-width: 440px;
+  max-height: 75vh;
   overflow-y: auto;
 }
 
@@ -385,6 +385,32 @@ select.input {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   animation: shimmer 3s linear infinite;
+}
+
+/* 内联小图标 */
+.inline-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  vertical-align: middle;
+  margin-right: 2px;
+}
+
+/* 属性图标（全局统一大小+tooltip） */
+.el-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  vertical-align: middle;
+  cursor: help;
+}
+
+.el-icon-lg {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  vertical-align: middle;
+  cursor: help;
 }
 
 /* 图片 */

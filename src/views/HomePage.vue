@@ -1,13 +1,10 @@
 <template>
   <div class="page">
-    <div class="page-header">
-      <div class="page-title">异色追踪器</div>
-      <div class="page-subtitle">洛克王国世界 S1赛季</div>
-    </div>
+    <PageHeader title="异色追踪器" subtitle="洛克王国世界 S1赛季" />
 
     <!-- 收集进度总览 -->
     <div class="card">
-      <div class="card-title"><span class="icon">&#9733;</span> 异色收集进度</div>
+      <div class="card-title"><img :src="ICON_SHINY" class="inline-icon" /> 异色收集进度</div>
       <div class="collection-overview">
         <ProgressRing
           :value="store.collectedCount"
@@ -38,12 +35,19 @@
 
     <!-- 当前刷取目标 -->
     <div class="card" @click="showTargetPicker = true">
-      <div class="card-title"><span class="icon">&#127919;</span> 当前目标</div>
+      <div class="card-title"><img :src="ICON_TARGET" class="inline-icon" /> 当前目标</div>
       <div v-if="store.currentTarget" class="target-display">
-        <div class="target-name">{{ store.currentTarget.name }}</div>
+        <div class="target-name-row">
+          <img v-if="store.currentTarget.imgShiny" :src="store.currentTarget.imgShiny" class="target-avatar" />
+          <span class="target-name">{{ store.currentTarget.name }}</span>
+        </div>
         <div class="target-meta">
-          <span class="element-tag" :style="{ color: targetElementColor }">
-            {{ targetElementName }}
+          <span class="element-tag">
+            <template v-for="(el, i) in targetElementArr" :key="el">
+              <img :src="ELEMENTS[el]?.icon" class="el-icon" :title="ELEMENTS[el]?.name" />
+              <span :style="{ color: ELEMENTS[el]?.color }">{{ ELEMENTS[el]?.name }}</span>
+              <span v-if="i < targetElementArr.length - 1" style="color:var(--text-muted)">/</span>
+            </template>
           </span>
           <span class="divider">|</span>
           <span>{{ store.currentTarget.area }}</span>
@@ -51,13 +55,13 @@
         <div class="target-progress mt-8">
           <div class="flex justify-between mb-8">
             <span class="stat-label">噩梦枷锁</span>
-            <span class="stat-value">{{ store.currentCounter.nightmareCount }} / 80</span>
+            <span class="stat-value">{{ store.currentFamilyCounter.nightmareCount }} / 80</span>
           </div>
           <div class="progress-bar">
             <div
               class="progress-bar-fill"
-              :class="{ shiny: store.currentCounter.nightmareCount >= 80 }"
-              :style="{ width: Math.min(store.currentCounter.nightmareCount / 80 * 100, 100) + '%' }"
+              :class="{ shiny: store.currentFamilyCounter.nightmareCount >= 80 }"
+              :style="{ width: Math.min(store.currentFamilyCounter.nightmareCount / 80 * 100, 100) + '%' }"
             ></div>
           </div>
         </div>
@@ -69,22 +73,22 @@
 
     <!-- 快捷操作 -->
     <div class="card">
-      <div class="card-title"><span class="icon">&#9889;</span> 快捷操作</div>
+      <div class="card-title"><img :src="ICON_BOLT" class="inline-icon" /> 快捷操作</div>
       <div class="quick-actions">
         <router-link to="/counter" class="action-btn">
-          <span class="action-icon">&#128336;</span>
+          <img :src="ICON_TARGET" class="action-icon-img" />
           <span>开始计数</span>
         </router-link>
         <router-link to="/collection" class="action-btn">
-          <span class="action-icon">&#128214;</span>
+          <img :src="ICON_BOOK" class="action-icon-img" />
           <span>异色图鉴</span>
         </router-link>
         <router-link to="/log" class="action-btn">
-          <span class="action-icon">&#128203;</span>
+          <img :src="ICON_SCROLL" class="action-icon-img" />
           <span>刷取日志</span>
         </router-link>
         <router-link to="/stats" class="action-btn">
-          <span class="action-icon">&#128202;</span>
+          <img :src="ICON_CHART" class="action-icon-img" />
           <span>数据统计</span>
         </router-link>
       </div>
@@ -92,7 +96,7 @@
 
     <!-- 最近异色 -->
     <div v-if="recentShiny.length > 0" class="card">
-      <div class="card-title"><span class="icon">&#10024;</span> 最近获得的异色</div>
+      <div class="card-title"><img :src="ICON_SHINY" class="inline-icon" /> 最近获得的异色</div>
       <div v-for="log in recentShiny" :key="log.id" class="recent-shiny-item">
         <div class="shiny-dot"></div>
         <div class="recent-info">
@@ -134,6 +138,8 @@
 import { ref, computed } from 'vue'
 import { useHuntingStore } from '../stores/hunting.js'
 import { SHINY_PETS, ELEMENTS } from '../data/pets.js'
+import { ICON_SHINY, ICON_TARGET, ICON_BOLT, ICON_BOOK, ICON_SCROLL, ICON_CHART } from '../data/icons.js'
+import PageHeader from '../components/PageHeader.vue'
 import ProgressRing from '../components/ProgressRing.vue'
 import PetCard from '../components/PetCard.vue'
 
@@ -144,6 +150,12 @@ const showTargetPicker = ref(false)
 const completionRate = computed(() => {
   if (store.totalShinyCount === 0) return 0
   return (store.collectedCount / store.totalShinyCount * 100).toFixed(1)
+})
+
+const targetElementArr = computed(() => {
+  if (!store.currentTarget) return []
+  const el = store.currentTarget.element
+  return Array.isArray(el) ? el : [el]
 })
 
 const targetElementColor = computed(() => {
@@ -230,6 +242,20 @@ function selectTarget(petId) {
   text-align: center;
 }
 
+.target-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.target-avatar {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
 .target-name {
   font-size: 20px;
   font-weight: 700;
@@ -288,8 +314,10 @@ function selectTarget(petId) {
   background: var(--bg-card-hover);
 }
 
-.action-icon {
-  font-size: 24px;
+.action-icon-img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
 }
 
 .recent-shiny-item {

@@ -12,8 +12,11 @@
     <div class="pet-info">
       <div class="pet-name">{{ pet.name }}</div>
       <div class="pet-element">
-        <span class="element-dot" :style="{ background: elementColor }"></span>
-        {{ elementName }}
+        <template v-for="(el, i) in elementArr" :key="el">
+          <img :src="ELEMENTS[el]?.icon" class="el-icon" :title="ELEMENTS[el]?.name" />
+          <span :style="{ color: ELEMENTS[el]?.color }">{{ ELEMENTS[el]?.name }}</span>
+          <span v-if="i < elementArr.length - 1" style="color:var(--text-muted);margin:0 1px">/</span>
+        </template>
       </div>
     </div>
     <div v-if="showCategory" class="pet-category">
@@ -35,11 +38,12 @@ const props = defineProps({
 
 defineEmits(['click'])
 
-// element 现在是数组，取第一个作为主属性颜色
-const primaryElement = computed(() => {
+// element 现在是数组
+const elementArr = computed(() => {
   const el = props.pet.element
-  return Array.isArray(el) ? el[0] : el
+  return Array.isArray(el) ? el : [el]
 })
+const primaryElement = computed(() => elementArr.value[0])
 const elementColor = computed(() => ELEMENTS[primaryElement.value]?.color || '#adb5bd')
 const elementName = computed(() => {
   const el = props.pet.element
@@ -143,12 +147,7 @@ const categoryClass = computed(() => {
   margin-top: 2px;
 }
 
-.element-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
+/* pet-el-icon moved to global .el-icon */
 
 .pet-category {
   flex-shrink: 0;

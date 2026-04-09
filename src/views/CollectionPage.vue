@@ -1,9 +1,6 @@
 <template>
   <div class="page">
-    <div class="page-header">
-      <div class="page-title">异色图鉴</div>
-      <div class="page-subtitle">S1赛季 · 共 {{ totalCount }} 种异色精灵</div>
-    </div>
+    <PageHeader title="异色图鉴" :subtitle="`S1赛季 · 共 ${totalCount} 种异色精灵`" />
 
     <!-- 进度条 -->
     <div class="card">
@@ -49,8 +46,12 @@
           <span v-if="isCollected(pet.id)" class="cc-check">&#10003;</span>
         </div>
         <div class="cc-name">{{ pet.name }}</div>
-        <div class="cc-element" :style="{ color: getElementColor(pet.element) }">
-          {{ getElementName(pet.element) }}
+        <div class="cc-element">
+          <template v-for="(el, i) in getElementArr(pet.element)" :key="el">
+            <img :src="getElementIcon(el)" class="el-icon" :title="ELEMENTS[el]?.name" />
+            <span :style="{ color: ELEMENTS[el]?.color }" style="font-size:11px">{{ ELEMENTS[el]?.name }}</span>
+            <span v-if="i < getElementArr(pet.element).length - 1" style="color:var(--text-muted);font-size:10px">/</span>
+          </template>
         </div>
       </div>
     </div>
@@ -63,8 +64,12 @@
             <div v-if="selectedPet" class="modal-content">
               <div class="detail-header">
                 <div class="detail-name">{{ selectedPet.name }}</div>
-                <div class="detail-element" :style="{ color: getElementColor(selectedPet.element) }">
-                  {{ getElementName(selectedPet.element) }}
+                <div class="detail-element">
+                  <template v-for="(el, i) in getElementArr(selectedPet.element)" :key="el">
+                    <img :src="getElementIcon(el)" class="el-icon-lg" :title="ELEMENTS[el]?.name" />
+                    <span :style="{ color: ELEMENTS[el]?.color }">{{ ELEMENTS[el]?.name }}</span>
+                    <span v-if="i < getElementArr(selectedPet.element).length - 1" style="color:var(--text-muted)">/</span>
+                  </template>
                 </div>
               </div>
 
@@ -83,9 +88,9 @@
                 <div class="form-card form-card-shiny">
                   <div class="form-img-wrap shiny-glow">
                     <img v-if="selectedPet.imgShiny" :src="selectedPet.imgShiny" class="form-img" />
-                    <div v-else class="form-placeholder" style="background: var(--color-shiny)">&#10024;</div>
+                    <div v-else class="form-placeholder" style="background: var(--color-shiny)">?</div>
                   </div>
-                  <div class="form-label shiny-label">&#10024; 异色形态</div>
+                  <div class="form-label shiny-label"><img :src="ICON_SHINY" class="inline-icon" /> 异色形态</div>
                 </div>
               </div>
               <div v-else class="detail-avatar-fallback" :style="{ background: getElementColor(selectedPet.element) }">
@@ -150,7 +155,7 @@
                   :class="isCollected(selectedPet.id) ? 'btn-ghost' : 'btn-shiny'"
                   @click="toggleCollect"
                 >
-                  {{ isCollected(selectedPet.id) ? '取消收集' : '&#10024; 标记已收集' }}
+                  {{ isCollected(selectedPet.id) ? '取消收集' : '标记已收集' }}
                 </button>
                 <button
                   class="btn btn-primary btn-block mt-8"
@@ -171,6 +176,8 @@
 import { ref, computed } from 'vue'
 import { useHuntingStore } from '../stores/hunting.js'
 import { SHINY_PETS, ELEMENTS, CATEGORY_LABELS } from '../data/pets.js'
+import { ICON_SHINY } from '../data/icons.js'
+import PageHeader from '../components/PageHeader.vue'
 import { useRouter } from 'vue-router'
 
 const store = useHuntingStore()
@@ -213,6 +220,14 @@ const petShinyCount = computed(() =>
 
 function isCollected(id) {
   return !!store.collection[id]?.collected
+}
+
+function getElementArr(el) {
+  return Array.isArray(el) ? el : [el]
+}
+
+function getElementIcon(el) {
+  return ELEMENTS[el]?.icon || ''
 }
 
 function getElementColor(el) {
@@ -391,6 +406,20 @@ function setAsTarget() {
   font-size: 14px;
   font-weight: 600;
   margin-top: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+/* element icons use global .el-icon / .el-icon-lg */
+
+.cc-element {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  margin-top: 2px;
 }
 
 /* 双形态对比 */

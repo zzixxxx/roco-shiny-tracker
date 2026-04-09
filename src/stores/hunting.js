@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
 import { SHINY_PETS } from '../data/pets.js'
 import { TRACKABLE_ITEMS } from '../data/items.js'
+import { getToken, getUid, uploadToGist } from '../stores/gistSync.js'
 
 function defaultItems() {
   const obj = {}
@@ -30,9 +31,11 @@ export const useHuntingStore = defineStore('hunting', () => {
   // 当前刷取目标精灵ID
   const currentTargetId = ref(saved?.currentTargetId || '')
 
-  // 噩梦枷锁计数器（按精灵家族）
-  // { [petId]: { nightmareCount: number, catchCount: number } }
-  const counters = ref(saved?.counters || {})
+  // 双池计数器
+  // 家族池: { [petId]: { nightmareCount, catchCount } }
+  // 属性池: { [element]: { nightmareCount, catchCount } }
+  const familyCounters = ref(saved?.familyCounters || saved?.counters || {})
+  const elementCounters = ref(saved?.elementCounters || {})
 
   // 刷取日志
   const logs = ref(saved?.logs || [])
@@ -54,8 +57,21 @@ export const useHuntingStore = defineStore('hunting', () => {
     SHINY_PETS.find(p => p.id === currentTargetId.value)
   )
 
-  const currentCounter = computed(() =>
-    counters.value[currentTargetId.value] || { nightmareCount: 0, catchCount: 0 }
+  // 当前目标的家族池计数
+  const currentFamilyCounter = computed(() =>
+    familyCounters.value[currentTargetId.value] || { nightmareCount: 0, catchCount: 0 }
+  )
+
+  // 当前目标的属性池计数（按主属性）
+  const currentElementKey = computed(() => {
+    const t = currentTarget.value
+    if (!t) return ''
+    const el = t.element
+    return Array.isArray(el) ? el[0] : el
+  })
+
+  const currentElementCounter = computed(() =>
+    elementCounters.value[currentElementKey.value] || { nightmareCount: 0, catchCount: 0 }
   )
 
   const collectedCount = computed(() =>
@@ -82,45 +98,98 @@ export const useHuntingStore = defineStore('hunting', () => {
     return logs.value.filter(l => l.petId === petId)
   }
 
+  function _ensureFamily(id) {
+    if (!familyCounters.value[id]) familyCounters.value[id] = { nightmareCount: 0, catchCount: 0 }
+  }
+  function _ensureElement(el) {
+    if (!el) return
+    if (!elementCounters.value[el]) elementCounters.value[el] = { nightmareCount: 0, catchCount: 0 }
+  }
+
   // 动作
   function setTarget(petId) {
     currentTargetId.value = petId
-    if (!counters.value[petId]) {
-      counters.value[petId] = { nightmareCount: 0, catchCount: 0 }
+    _ensureFamily(petId)
+    const pet = SHINY_PETS.find(p => p.id === petId)
+    if (pet) {
+      const el = Array.isArray(pet.element) ? pet.element[0] : pet.element
+      _ensureElement(el)
     }
   }
 
-  function incrementCatch() {
+  // pool: 'family' | 'element'
+  function setCatchCount(pool, value) {
+    const v = Math.max(0, Math.floor(value || 0))
+    if (pool === 'element') {
+      const el = currentElementKey.value
+      if (!el) return
+      _ensureElement(el)
+      elementCounters.value[el].catchCount = v
+    } else {
+      const id = currentTargetId.value
+      if (!id) return
+      _ensureFamily(id)
+      familyCounters.value[id].catchCount = v
+    }
+  }
+
+  function incrementCatch(pool = 'family') {
+    if (pool === 'element') {
+      const el = currentElementKey.value
+      if (!el) return
+      _ensureElement(el)
+      elementCounters.value[el].catchCount++
+    } else {
+      const id = currentTargetId.value
+      if (!id) return
+      _ensureFamily(id)
+      familyCounters.value[id].catchCount++
+    }
+  }
+
+  function decrementCatch(pool = 'family') {
+    if (pool === 'element') {
+      const el = currentElementKey.value
+      if (!el) return
+      const c = elementCounters.value[el]
+      if (c && c.catchCount > 0) c.catchCount--
+    } else {
+      const id = currentTargetId.value
+      if (!id) return
+      const c = familyCounters.value[id]
+      if (c && c.catchCount > 0) c.catchCount--
+    }
+  }
+
+  // pool: 'family' | 'element'
+  function recordNightmare(result, pool = 'family', note = '') {
     const id = currentTargetId.value
     if (!id) return
-    if (!counters.value[id]) {
-      counters.value[id] = { nightmareCount: 0, catchCount: 0 }
-    }
-    counters.value[id].catchCount++
-  }
 
-  function decrementCatch() {
-    const id = currentTargetId.value
-    if (!id || !counters.value[id]) return
-    if (counters.value[id].catchCount > 0) {
-      counters.value[id].catchCount--
+    let nmCount = 0
+    let catches = 0
+    if (pool === 'element') {
+      const el = currentElementKey.value
+      _ensureElement(el)
+      catches = elementCounters.value[el].catchCount
+      elementCounters.value[el].nightmareCount++
+      elementCounters.value[el].catchCount = 0
+      nmCount = elementCounters.value[el].nightmareCount
+    } else {
+      _ensureFamily(id)
+      catches = familyCounters.value[id].catchCount
+      familyCounters.value[id].nightmareCount++
+      familyCounters.value[id].catchCount = 0
+      nmCount = familyCounters.value[id].nightmareCount
     }
-  }
-
-  function recordNightmare(result, note = '') {
-    const id = currentTargetId.value
-    if (!id) return
-    if (!counters.value[id]) {
-      counters.value[id] = { nightmareCount: 0, catchCount: 0 }
-    }
-    counters.value[id].nightmareCount++
-    counters.value[id].catchCount = 0
 
     const log = {
       id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
       petId: id,
+      pool,
       timestamp: new Date().toISOString(),
-      nightmareCount: counters.value[id].nightmareCount,
+      nightmareCount: nmCount,
+      catchesBeforeTrigger: catches,
       result,
       note,
     }
@@ -132,13 +201,24 @@ export const useHuntingStore = defineStore('hunting', () => {
         collectedAt: log.timestamp,
         method: 'hunting',
       }
+      // 异色出现，清空对应卡池保底重新计算
+      if (pool === 'element') {
+        const el = currentElementKey.value
+        if (el) elementCounters.value[el] = { nightmareCount: 0, catchCount: 0 }
+      } else {
+        familyCounters.value[id] = { nightmareCount: 0, catchCount: 0 }
+      }
     }
   }
 
-  function resetCounter(petId) {
-    const id = petId || currentTargetId.value
-    if (!id) return
-    counters.value[id] = { nightmareCount: 0, catchCount: 0 }
+  function resetCounter(pool = 'family', key) {
+    if (pool === 'element') {
+      const el = key || currentElementKey.value
+      if (el) elementCounters.value[el] = { nightmareCount: 0, catchCount: 0 }
+    } else {
+      const id = key || currentTargetId.value
+      if (id) familyCounters.value[id] = { nightmareCount: 0, catchCount: 0 }
+    }
   }
 
   function toggleCollected(petId, method = 'hunting') {
@@ -204,9 +284,33 @@ export const useHuntingStore = defineStore('hunting', () => {
     })
   }
 
+  function updateLog(logId, updates) {
+    const log = logs.value.find(l => l.id === logId)
+    if (!log) return
+    if (updates.result !== undefined) log.result = updates.result
+    if (updates.note !== undefined) log.note = updates.note
+    if (updates.catchesBeforeTrigger !== undefined) log.catchesBeforeTrigger = updates.catchesBeforeTrigger
+  }
+
   function deleteLog(logId) {
     const idx = logs.value.findIndex(l => l.id === logId)
-    if (idx !== -1) logs.value.splice(idx, 1)
+    if (idx === -1) return
+    const log = logs.value[idx]
+    // 回滚计数器（仅最新一条有效回滚）
+    if (idx === 0) {
+      if (log.pool === 'element') {
+        const pet = SHINY_PETS.find(p => p.id === log.petId)
+        const el = pet ? (Array.isArray(pet.element) ? pet.element[0] : pet.element) : ''
+        if (el && elementCounters.value[el]) {
+          elementCounters.value[el].nightmareCount = Math.max(0, elementCounters.value[el].nightmareCount - 1)
+        }
+      } else {
+        if (familyCounters.value[log.petId]) {
+          familyCounters.value[log.petId].nightmareCount = Math.max(0, familyCounters.value[log.petId].nightmareCount - 1)
+        }
+      }
+    }
+    logs.value.splice(idx, 1)
   }
 
   function deleteEgg(eggId) {
@@ -217,7 +321,8 @@ export const useHuntingStore = defineStore('hunting', () => {
   function exportData() {
     return JSON.stringify({
       currentTargetId: currentTargetId.value,
-      counters: counters.value,
+      familyCounters: familyCounters.value,
+      elementCounters: elementCounters.value,
       logs: logs.value,
       collection: collection.value,
       items: items.value,
@@ -230,7 +335,8 @@ export const useHuntingStore = defineStore('hunting', () => {
     try {
       const data = JSON.parse(json)
       if (data.currentTargetId !== undefined) currentTargetId.value = data.currentTargetId
-      if (data.counters) counters.value = data.counters
+      if (data.familyCounters) familyCounters.value = data.familyCounters
+      if (data.elementCounters) elementCounters.value = data.elementCounters
       if (data.logs) logs.value = data.logs
       if (data.collection) collection.value = data.collection
       if (data.items) items.value = data.items
@@ -246,27 +352,46 @@ export const useHuntingStore = defineStore('hunting', () => {
   watch(
     () => ({
       currentTargetId: currentTargetId.value,
-      counters: { ...counters.value },
+      familyCounters: { ...familyCounters.value },
+      elementCounters: { ...elementCounters.value },
       logs: [...logs.value],
       collection: { ...collection.value },
       items: { ...items.value },
       itemLogs: [...itemLogs.value],
       eggs: [...eggs.value],
     }),
-    (state) => saveState(state),
+    (state) => {
+      saveState(state)
+      // 自动云同步（debounced）
+      autoSync(state)
+    },
     { deep: true }
   )
 
+  let syncTimer = null
+  function autoSync(state) {
+    const token = getToken()
+    const uid = getUid()
+    if (!token || !uid) return
+    clearTimeout(syncTimer)
+    syncTimer = setTimeout(() => {
+      uploadToGist(uid, state).catch(() => {})
+    }, 3000)
+  }
+
   return {
     currentTargetId,
-    counters,
+    familyCounters,
+    elementCounters,
     logs,
     collection,
     items,
     itemLogs,
     eggs,
     currentTarget,
-    currentCounter,
+    currentFamilyCounter,
+    currentElementKey,
+    currentElementCounter,
     collectedCount,
     totalShinyCount,
     shinyLogs,
@@ -274,9 +399,11 @@ export const useHuntingStore = defineStore('hunting', () => {
     shinyRate,
     getLogsForPet,
     setTarget,
+    setCatchCount,
     incrementCatch,
     decrementCatch,
     recordNightmare,
+    updateLog,
     resetCounter,
     toggleCollected,
     addItemUsage,

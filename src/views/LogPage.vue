@@ -1,21 +1,37 @@
 <template>
   <div class="page">
-    <div class="page-header">
-      <div class="page-title">刷取日志</div>
-      <div class="page-subtitle">记录每次噩梦枷锁结果</div>
-    </div>
+    <PageHeader title="刷取日志" subtitle="记录每次噩梦枷锁结果" />
 
-    <!-- 筛选 -->
-    <div class="filter-bar">
-      <button
-        v-for="f in filters"
-        :key="f.value"
-        class="filter-btn"
-        :class="{ active: currentFilter === f.value }"
-        @click="currentFilter = f.value"
-      >
-        {{ f.label }}
-      </button>
+    <!-- 多层筛选 -->
+    <div class="filter-section">
+      <div class="filter-label">褪色结果</div>
+      <div class="filter-bar">
+        <button v-for="f in resultFilters" :key="f.value" class="filter-btn" :class="{ active: filterResult === f.value }" @click="filterResult = filterResult === f.value ? '' : f.value">
+          {{ f.label }}
+        </button>
+      </div>
+    </div>
+    <div class="filter-section">
+      <div class="filter-label">卡池类型</div>
+      <div class="filter-bar">
+        <button class="filter-btn" :class="{ active: filterPool === 'family' }" @click="filterPool = filterPool === 'family' ? '' : 'family'">家族池</button>
+        <button class="filter-btn" :class="{ active: filterPool === 'element' }" @click="filterPool = filterPool === 'element' ? '' : 'element'">属性池</button>
+      </div>
+    </div>
+    <div class="filter-section">
+      <div class="filter-label">精灵</div>
+      <div class="filter-bar filter-bar-scroll">
+        <button
+          v-for="pet in loggedPets"
+          :key="pet.id"
+          class="filter-btn filter-btn-pet"
+          :class="{ active: filterPetId === pet.id }"
+          @click="filterPetId = filterPetId === pet.id ? '' : pet.id"
+        >
+          <img v-if="pet.imgShiny" :src="pet.imgShiny" class="filter-pet-img" />
+          {{ pet.name }}
+        </button>
+      </div>
     </div>
 
     <!-- 日志列表 -->
@@ -30,7 +46,7 @@
           <span class="log-dot" :class="'dot-' + log.result"></span>
           <span class="log-line"></span>
         </div>
-        <div class="log-content">
+        <div class="log-content" @click="openEditLog(log)">
           <div class="log-header">
             <span class="log-pet-name">{{ getPetName(log.petId) }}</span>
             <span class="tag" :class="'tag-' + log.result">
@@ -38,7 +54,11 @@
             </span>
           </div>
           <div class="log-meta">
-            <span>第 {{ log.nightmareCount }} 次噩梦枷锁</span>
+            <span>
+              {{ log.pool === 'element' ? '属性池' : '家族池' }}
+              · 第{{ log.nightmareCount }}次
+              <template v-if="log.catchesBeforeTrigger"> · 捕{{ log.catchesBeforeTrigger }}只触发</template>
+            </span>
             <span class="log-time">{{ formatTime(log.timestamp) }}</span>
           </div>
           <div v-if="log.note" class="log-note">{{ log.note }}</div>
@@ -59,13 +79,13 @@
 
     <!-- 孵蛋记录 -->
     <div class="section-header mt-16">
-      <span>&#129370; 孵蛋记录</span>
+      <span><img :src="ICON_EGG" class="inline-icon" /> 孵蛋记录</span>
       <button class="btn btn-ghost btn-sm" @click="showEggForm = true">+ 添加</button>
     </div>
 
     <div v-if="store.eggs.length > 0" class="log-list">
       <div v-for="egg in store.eggs" :key="egg.id" class="egg-item">
-        <div class="egg-icon">&#129370;</div>
+        <div class="egg-icon"><img :src="ICON_EGG" class="inline-icon" /></div>
         <div class="egg-content">
           <div class="egg-parents">
             {{ getPetName(egg.parent1) }} + {{ getPetName(egg.parent2) }}
@@ -127,18 +147,82 @@
         </div>
       </Transition>
     </Teleport>
+
+    <!-- 编辑日志弹窗 -->
+    <Teleport to="body">
+      <Transition name="fade">
+        <div v-if="editingLog" class="modal-overlay" @click.self="editingLog = null">
+          <div class="modal-content animate-float-in">
+            <div class="modal-title">编辑记录</div>
+            <div class="form-group">
+              <label class="form-label">结果</label>
+              <div class="edit-result-row">
+                <button
+                  v-for="r in ['shiny', 'nightmare', 'normal']"
+                  :key="r"
+                  class="btn btn-sm"
+                  :class="editForm.result === r ? (r === 'shiny' ? 'btn-shiny' : 'btn-primary') : 'btn-ghost'"
+                  @click="editForm.result = r"
+                >
+                  {{ { shiny: '异色', nightmare: '污染', normal: '普通' }[r] }}
+                </button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">触发前捕捉数</label>
+              <input v-model.number="editForm.catches" type="number" min="0" class="input" @keyup.enter="saveEditLog" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">备注</label>
+              <input v-model="editForm.note" class="input" placeholder="可选" @keyup.enter="saveEditLog" />
+            </div>
+            <div class="flex gap-8 mt-12">
+              <button class="btn btn-primary btn-block" @click="saveEditLog">保存</button>
+              <button class="btn btn-ghost btn-block" @click="editingLog = null">取消</button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, reactive } from 'vue'
 import { useHuntingStore } from '../stores/hunting.js'
-import { SHINY_PETS, RESULT_TYPES } from '../data/pets.js'
+import { SHINY_PETS, RESULT_TYPES, ELEMENTS } from '../data/pets.js'
+import { ICON_SHINY, ICON_POLLUTED, ICON_NORMAL, ICON_EGG } from '../data/icons.js'
+import PageHeader from '../components/PageHeader.vue'
 
 const store = useHuntingStore()
 const pets = SHINY_PETS
-const currentFilter = ref('all')
 const showEggForm = ref(false)
+
+// 三层筛选
+const filterResult = ref('')
+const filterPool = ref('')
+const filterPetId = ref('')
+
+// 编辑日志
+const editingLog = ref(null)
+const editForm = reactive({ result: '', catches: 0, note: '' })
+
+function openEditLog(log) {
+  editingLog.value = log
+  editForm.result = log.result
+  editForm.catches = log.catchesBeforeTrigger || 0
+  editForm.note = log.note || ''
+}
+
+function saveEditLog() {
+  if (!editingLog.value) return
+  store.updateLog(editingLog.value.id, {
+    result: editForm.result,
+    catchesBeforeTrigger: editForm.catches,
+    note: editForm.note,
+  })
+  editingLog.value = null
+}
 
 const eggForm = reactive({
   parent1: '',
@@ -146,16 +230,25 @@ const eggForm = reactive({
   result: 'normal',
 })
 
-const filters = [
-  { label: '全部', value: 'all' },
-  { label: '&#10024; 异色', value: 'shiny' },
-  { label: '&#128126; 污染', value: 'nightmare' },
-  { label: '&#9675; 普通', value: 'normal' },
+const resultFilters = [
+  { label: '异色', value: 'shiny' },
+  { label: '污染', value: 'nightmare' },
+  { label: '普通', value: 'normal' },
 ]
 
+// 有记录的精灵列表
+const loggedPets = computed(() => {
+  const ids = [...new Set(store.logs.map(l => l.petId))]
+  return ids.map(id => SHINY_PETS.find(p => p.id === id)).filter(Boolean)
+})
+
 const filteredLogs = computed(() => {
-  if (currentFilter.value === 'all') return store.logs
-  return store.logs.filter(l => l.result === currentFilter.value)
+  return store.logs.filter(l => {
+    if (filterResult.value && l.result !== filterResult.value) return false
+    if (filterPool.value && l.pool !== filterPool.value) return false
+    if (filterPetId.value && l.petId !== filterPetId.value) return false
+    return true
+  })
 })
 
 function getPetName(petId) {
@@ -207,15 +300,35 @@ function submitEgg() {
 </script>
 
 <style scoped>
+.filter-section {
+  margin-bottom: 8px;
+}
+
+.filter-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
 .filter-bar {
   display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: 6px;
+}
+
+.filter-bar-scroll {
+  overflow-x: auto;
+  flex-wrap: nowrap;
+  padding-bottom: 4px;
+}
+
+.filter-bar-scroll::-webkit-scrollbar {
+  display: none;
 }
 
 .filter-btn {
-  flex: 1;
-  padding: 8px 4px;
+  flex-shrink: 0;
+  padding: 6px 12px;
   border-radius: var(--radius-full);
   border: 1px solid var(--border-color);
   background: transparent;
@@ -224,6 +337,19 @@ function submitEgg() {
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.filter-btn-pet {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.filter-pet-img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
 }
 
 .filter-btn.active {
@@ -401,5 +527,14 @@ function submitEgg() {
   font-size: 13px;
   color: var(--text-secondary);
   margin-bottom: 6px;
+}
+
+.edit-result-row {
+  display: flex;
+  gap: 8px;
+}
+
+.log-content {
+  cursor: pointer;
 }
 </style>
