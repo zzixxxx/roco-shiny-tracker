@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="pg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#9B59B6"/>
+      <stop offset="100%" style="stop-color:#6C3483"/>
+    </linearGradient>
+    <radialGradient id="pr" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#BF7FDB;stop-opacity:0.6"/>
+      <stop offset="100%" style="stop-color:#6C3483;stop-opacity:0"/>
+    </radialGradient>
+  </defs>
+  <!-- 污染光晕 -->
+  <circle cx="24" cy="24" r="20" fill="url(#pr)"/>
+  <!-- 污染漩涡 -->
+  <path d="M24 6 C32 6 38 12 38 20 C38 26 34 30 28 30 C24 30 22 28 22 24 C22 21 24 19 27 19 C29 19 30 20 30 22" stroke="url(#pg)" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <!-- 污染滴 -->
+  <circle cx="16" cy="34" r="3" fill="#9B59B6" opacity="0.7"/>
+  <circle cx="32" cy="38" r="2.5" fill="#8E44AD" opacity="0.6"/>
+  <circle cx="12" cy="18" r="2" fill="#9B59B6" opacity="0.5"/>
+</svg>

@@ -1,0 +1,17 @@
+{
+  "name": "异色追踪器 - 洛克王国世界",
+  "short_name": "异色追踪",
+  "description": "洛克王国世界异色精灵刷取追踪工具",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a2e",
+  "theme_color": "#1a1a2e",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
