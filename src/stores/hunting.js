@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
 import { SHINY_PETS } from '../data/pets.js'
 import { TRACKABLE_ITEMS } from '../data/items.js'
-import { getToken, getUid, uploadToGist } from '../stores/gistSync.js'
+import { getUid, uploadToGist } from '../stores/gistSync.js'
 
 function defaultItems() {
   const obj = {}
@@ -370,9 +370,8 @@ export const useHuntingStore = defineStore('hunting', () => {
 
   let syncTimer = null
   function autoSync(state) {
-    const token = getToken()
     const uid = getUid()
-    if (!token || !uid) return
+    if (!uid) return
     clearTimeout(syncTimer)
     syncTimer = setTimeout(() => {
       uploadToGist(uid, state).catch(() => {})

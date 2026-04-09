@@ -141,39 +141,21 @@
 
     <!-- 云端同步 -->
     <div class="card">
-      <div class="card-title"><img :src="ICON_CLOUD" class="inline-icon" /> 云端同步 (GitHub Gist)</div>
-      <div class="form-group">
-        <label class="form-label">
-          GitHub Token
-          <a href="https://github.com/settings/tokens/new?scopes=gist&description=roco-shiny-tracker" target="_blank" style="color:var(--color-accent);font-size:11px;margin-left:4px">去创建(勾选gist)</a>
-        </label>
-        <input
-          :value="gistToken"
-          @input="e => setGistToken(e.target.value)"
-          type="password"
-          class="input"
-          placeholder="ghp_xxxx"
-        />
+      <div class="card-title"><img :src="ICON_CLOUD" class="inline-icon" /> 云端同步</div>
+      <div v-if="gistUid" class="sync-status">
+        <span>当前UID：<strong style="color:var(--color-accent)">{{ gistUid }}</strong></span>
+        <span class="sync-auto-hint">数据自动同步中</span>
       </div>
-      <div class="form-group">
-        <label class="form-label">UID（你的唯一标识，如游戏昵称）</label>
-        <input
-          :value="gistUid"
-          @input="e => setGistUid(e.target.value)"
-          class="input"
-          placeholder="输入你的UID"
-        />
+      <div v-else class="sync-hint">
+        请在右上角绑定 UID 后自动开启云端同步
       </div>
-      <div v-if="gistToken && gistUid" class="flex gap-8 mt-8">
+      <div v-if="gistUid" class="flex gap-8 mt-8">
         <button class="btn btn-primary btn-sm" style="flex:1" @click="doUpload" :disabled="syncing">
-          {{ syncing ? '同步中...' : '&#9650; 上传到云端' }}
+          {{ syncing ? '同步中...' : '立即上传' }}
         </button>
         <button class="btn btn-ghost btn-sm" style="flex:1" @click="doDownload" :disabled="syncing">
-          {{ syncing ? '同步中...' : '&#9660; 从云端恢复' }}
+          {{ syncing ? '同步中...' : '从云端恢复' }}
         </button>
-      </div>
-      <div v-if="!gistToken || !gistUid" class="sync-hint mt-8">
-        填写 Token 和 UID 后即可使用云端同步
       </div>
       <div v-if="syncMsg" class="sync-msg mt-8" :class="{ 'sync-error': syncError }">
         {{ syncMsg }}
@@ -189,60 +171,36 @@ import { SHINY_PETS } from '../data/pets.js'
 import PageHeader from '../components/PageHeader.vue'
 import { ICON_CHART, ICON_BAG, ICON_EGG, ICON_GEAR, ICON_CLOUD } from '../data/icons.js'
 import { TRACKABLE_ITEMS } from '../data/items.js'
-import { getToken, setToken, getUid, setUid, uploadToGist, downloadFromGist } from '../stores/gistSync.js'
+import { getUid, setUid, uploadToGist, downloadFromGist } from '../stores/gistSync.js'
 
 const store = useHuntingStore()
 const fileInput = ref(null)
 const trackableItems = TRACKABLE_ITEMS
 
-// 云端同步
-const gistToken = ref(getToken())
+// 云端同步（Token已内置，只需UID）
 const gistUid = ref(getUid())
-// 每次打开页面刷新UID（可能从App顶栏改了）
 onActivated(() => { gistUid.value = getUid() })
 
 const syncing = ref(false)
 const syncMsg = ref('')
 const syncError = ref(false)
 
-function setGistToken(val) {
-  gistToken.value = val
-  setToken(val)
-}
-
-function setGistUid(val) {
-  gistUid.value = val
-  setUid(val)
-}
-
 async function doUpload() {
-  syncing.value = true
-  syncMsg.value = ''
-  syncError.value = false
+  syncing.value = true; syncMsg.value = ''; syncError.value = false
   try {
-    const data = JSON.parse(store.exportData())
-    await uploadToGist(gistUid.value, data)
-    syncMsg.value = `上传成功！(UID: ${gistUid.value})`
-  } catch (e) {
-    syncMsg.value = '上传失败：' + e.message
-    syncError.value = true
-  }
+    await uploadToGist(gistUid.value, JSON.parse(store.exportData()))
+    syncMsg.value = '上传成功！'
+  } catch (e) { syncMsg.value = '失败：' + e.message; syncError.value = true }
   syncing.value = false
 }
 
 async function doDownload() {
-  if (!confirm(`从云端恢复 UID "${gistUid.value}" 的数据，将覆盖本地，确定？`)) return
-  syncing.value = true
-  syncMsg.value = ''
-  syncError.value = false
+  if (!confirm('从云端恢复将覆盖本地数据，确定？')) return
+  syncing.value = true; syncMsg.value = ''; syncError.value = false
   try {
-    const data = await downloadFromGist(gistUid.value)
-    store.importData(JSON.stringify(data))
-    syncMsg.value = `恢复成功！(UID: ${gistUid.value})`
-  } catch (e) {
-    syncMsg.value = '恢复失败：' + e.message
-    syncError.value = true
-  }
+    store.importData(JSON.stringify(await downloadFromGist(gistUid.value)))
+    syncMsg.value = '恢复成功！'
+  } catch (e) { syncMsg.value = '失败：' + e.message; syncError.value = true }
   syncing.value = false
 }
 
@@ -474,6 +432,21 @@ function doImport(e) {
   border-radius: var(--radius-md);
   background: rgba(39, 174, 96, 0.06);
   color: var(--color-success);
+}
+
+.sync-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.sync-auto-hint {
+  font-size: 11px;
+  color: var(--color-success);
+  background: rgba(39, 174, 96, 0.06);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
 }
 
 .sync-hint {

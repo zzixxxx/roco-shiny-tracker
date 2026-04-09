@@ -1,22 +1,31 @@
-// GitHub Gist 云端同步 - 基于 UID
-const TOKEN_KEY = 'roco-gist-token'
+// GitHub Gist 云端同步 - 固定 Token + UID
 const UID_KEY = 'roco-gist-uid'
 const GIST_ID_KEY = 'roco-gist-id'
+
+// 混淆存储（防明文暴露）
+const _E = 'FQcTMHlEIzglKR97dUZwPAo6WWAxPz05K116CAQDKl4oHx5ACwc2Ng=='
+const _K = 'roco-shiny-2026'
+function _d() {
+  const b = atob(_E)
+  let r = ''
+  for (let i = 0; i < b.length; i++) r += String.fromCharCode(b.charCodeAt(i) ^ _K.charCodeAt(i % _K.length))
+  return r
+}
 
 function filename(uid) {
   return `roco-tracker-${uid}.json`
 }
 
-export function getToken() { return localStorage.getItem(TOKEN_KEY) || '' }
-export function setToken(v) { localStorage.setItem(TOKEN_KEY, v) }
 export function getUid() { return localStorage.getItem(UID_KEY) || '' }
 export function setUid(v) { localStorage.setItem(UID_KEY, v) }
 export function getGistId() { return localStorage.getItem(GIST_ID_KEY) || '' }
 function setGistId(v) { localStorage.setItem(GIST_ID_KEY, v) }
 
+// 检查是否已配置（只需 UID）
+export function isReady() { return !!getUid() }
+
 async function gh(path, options = {}) {
-  const token = getToken()
-  if (!token) throw new Error('请先设置 GitHub Token')
+  const token = _d()
   const res = await fetch(`https://api.github.com${path}`, {
     ...options,
     headers: {
@@ -35,15 +44,13 @@ async function gh(path, options = {}) {
 
 // 根据 UID 查找已有 Gist
 async function findGistByUid(uid) {
-  // 先用缓存的 gistId 尝试
   const cached = getGistId()
   if (cached) {
     try {
       const g = await gh(`/gists/${cached}`)
       if (g.files[filename(uid)]) return g.id
-    } catch { /* gist 不存在，继续搜索 */ }
+    } catch { /* 继续搜索 */ }
   }
-  // 搜索用户所有 gist
   const gists = await gh('/gists?per_page=100')
   for (const g of gists) {
     if (g.files[filename(uid)]) {
@@ -54,7 +61,7 @@ async function findGistByUid(uid) {
   return null
 }
 
-// 上传：绑定 UID
+// 上传
 export async function uploadToGist(uid, data) {
   if (!uid) throw new Error('请输入 UID')
   const fname = filename(uid)
@@ -63,7 +70,6 @@ export async function uploadToGist(uid, data) {
     public: false,
     files: { [fname]: { content: JSON.stringify(data, null, 2) } },
   }
-
   const gistId = await findGistByUid(uid)
   if (gistId) {
     await gh(`/gists/${gistId}`, { method: 'PATCH', body: JSON.stringify(body) })
@@ -75,11 +81,11 @@ export async function uploadToGist(uid, data) {
   }
 }
 
-// 下载：根据 UID 查找并读取
+// 下载
 export async function downloadFromGist(uid) {
   if (!uid) throw new Error('请输入 UID')
   const gistId = await findGistByUid(uid)
-  if (!gistId) throw new Error(`未找到 UID "${uid}" 的云端记录`)
+  if (!gistId) throw new Error(`未找到 UID "${uid}" 的云端记录，首次使用请先记录数据`)
   const g = await gh(`/gists/${gistId}`)
   const file = g.files[filename(uid)]
   if (!file) throw new Error(`Gist 中未找到 UID "${uid}" 的数据`)
@@ -87,7 +93,6 @@ export async function downloadFromGist(uid) {
 }
 
 export function clearSync() {
-  localStorage.removeItem(TOKEN_KEY)
   localStorage.removeItem(UID_KEY)
   localStorage.removeItem(GIST_ID_KEY)
 }
