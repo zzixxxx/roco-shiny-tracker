@@ -1,5 +1,72 @@
-# Vue 3 + Vite
+# Roco Shiny Tracker - 洛克王国世界异色追踪器
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+一款用于记录《洛克王国：世界》异色精灵刷取进度的 Web PWA 应用。
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+## 功能
+
+### 首页仪表盘
+- S1赛季异色收集进度总览（19种异色精灵）
+- 当前刷取目标与噩梦枷锁进度
+- 最近获得的异色记录
+
+### 刷取计数器
+- **噩梦枷锁进度环**（X/80保底）
+- **连续捕捉计数**（20~35只触发噩梦枷锁）
+- **结果记录**（异色 / 污染 / 普通）带选中动效
+- **道具消耗追踪** - 图片选择道具，输入数量，记录可编辑/删除
+
+### 异色图鉴
+- 19种异色精灵网格展示（异色形态立绘）
+- 按分类筛选：全部 / 已收集 / 未收集 / 赛季限定 / 常驻
+- 点击查看精灵详情：**普通形态 ↔ 异色形态**双图对比
+- 进化链、出没区域、刷取提示、庇护所果实组合
+
+### 刷取日志
+- 噩梦枷锁结果时间线
+- 按结果类型筛选（异色 / 污染 / 普通）
+- 孵蛋记录管理
+
+### 数据统计
+- 异色出现率、结果分布图
+- 各精灵刷取排行
+- 道具消耗汇总（含Wiki道具图片）
+- 数据导入/导出（JSON备份）
+
+## S1赛季异色精灵
+
+| 分类 | 精灵（共19种） |
+|------|---------------|
+| 赛季限定（8） | 粉星仔、粉粉星、月牙雪熊、贝瑟、柴渣虫、空空颅、嗜光嗡嗡、双灯鱼 |
+| 常驻（8） | 恶魔狼、奇丽花、酷拉、治愈兔、机械方方、呼呼猪、雪影娃娃、格兰种子 |
+| 高级战令（2） | 犀角鸟、绒绒 |
+| 联动限定（1） | 火红尾 |
+
+## 技术栈
+
+- **Vue 3** + Vite
+- **Vue Router** + **Pinia**
+- **LocalStorage** 持久化
+- **PWA** 支持（可添加到手机桌面）
+- 精灵/道具图片来源：[Bilibili Wiki](https://wiki.biligame.com/rocom/)
+
+## 快速开始
+
+```bash
+# 安装依赖
+npm install
+
+# 开发
+npm run dev
+
+# 构建
+npm run build
+```
+
+## 数据来源
+
+- 精灵图鉴数据：[wiki.biligame.com/rocom](https://wiki.biligame.com/rocom/)
+- 异色机制参考：各攻略站及玩家社区
+
+## License
+
+MIT
