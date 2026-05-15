@@ -31,11 +31,13 @@ export const useHuntingStore = defineStore('hunting', () => {
   // 当前刷取目标精灵ID
   const currentTargetId = ref(saved?.currentTargetId || '')
 
-  // 双池计数器
+  // 三池计数器
   // 家族池: { [petId]: { nightmareCount, catchCount } }
-  // 属性池: { [element]: { nightmareCount, catchCount } }
+  // 系别池: { [element]: { nightmareCount, catchCount } }
+  // 大世界池: { nightmareCount, catchCount }
   const familyCounters = ref(saved?.familyCounters || saved?.counters || {})
   const elementCounters = ref(saved?.elementCounters || {})
+  const worldCounter = ref(saved?.worldCounter || { nightmareCount: 0, catchCount: 0 })
 
   // 刷取日志
   const logs = ref(saved?.logs || [])
@@ -73,6 +75,9 @@ export const useHuntingStore = defineStore('hunting', () => {
   const currentElementCounter = computed(() =>
     elementCounters.value[currentElementKey.value] || { nightmareCount: 0, catchCount: 0 }
   )
+
+  // 当前大世界池计数
+  const currentWorldCounter = computed(() => worldCounter.value)
 
   const collectedCount = computed(() =>
     Object.values(collection.value).filter(c => c.collected).length
@@ -117,10 +122,12 @@ export const useHuntingStore = defineStore('hunting', () => {
     }
   }
 
-  // pool: 'family' | 'element'
+  // pool: 'family' | 'element' | 'world'
   function setCatchCount(pool, value) {
     const v = Math.max(0, Math.floor(value || 0))
-    if (pool === 'element') {
+    if (pool === 'world') {
+      worldCounter.value.catchCount = v
+    } else if (pool === 'element') {
       const el = currentElementKey.value
       if (!el) return
       _ensureElement(el)
@@ -134,7 +141,9 @@ export const useHuntingStore = defineStore('hunting', () => {
   }
 
   function incrementCatch(pool = 'family') {
-    if (pool === 'element') {
+    if (pool === 'world') {
+      worldCounter.value.catchCount++
+    } else if (pool === 'element') {
       const el = currentElementKey.value
       if (!el) return
       _ensureElement(el)
@@ -148,7 +157,9 @@ export const useHuntingStore = defineStore('hunting', () => {
   }
 
   function decrementCatch(pool = 'family') {
-    if (pool === 'element') {
+    if (pool === 'world') {
+      if (worldCounter.value.catchCount > 0) worldCounter.value.catchCount--
+    } else if (pool === 'element') {
       const el = currentElementKey.value
       if (!el) return
       const c = elementCounters.value[el]
@@ -161,14 +172,19 @@ export const useHuntingStore = defineStore('hunting', () => {
     }
   }
 
-  // pool: 'family' | 'element'
+  // pool: 'family' | 'element' | 'world'
   function recordNightmare(result, pool = 'family', note = '') {
     const id = currentTargetId.value
     if (!id) return
 
     let nmCount = 0
     let catches = 0
-    if (pool === 'element') {
+    if (pool === 'world') {
+      catches = worldCounter.value.catchCount
+      worldCounter.value.nightmareCount++
+      worldCounter.value.catchCount = 0
+      nmCount = worldCounter.value.nightmareCount
+    } else if (pool === 'element') {
       const el = currentElementKey.value
       _ensureElement(el)
       catches = elementCounters.value[el].catchCount
@@ -202,7 +218,9 @@ export const useHuntingStore = defineStore('hunting', () => {
         method: 'hunting',
       }
       // 异色出现，清空对应卡池保底重新计算
-      if (pool === 'element') {
+      if (pool === 'world') {
+        worldCounter.value = { nightmareCount: 0, catchCount: 0 }
+      } else if (pool === 'element') {
         const el = currentElementKey.value
         if (el) elementCounters.value[el] = { nightmareCount: 0, catchCount: 0 }
       } else {
@@ -212,7 +230,9 @@ export const useHuntingStore = defineStore('hunting', () => {
   }
 
   function resetCounter(pool = 'family', key) {
-    if (pool === 'element') {
+    if (pool === 'world') {
+      worldCounter.value = { nightmareCount: 0, catchCount: 0 }
+    } else if (pool === 'element') {
       const el = key || currentElementKey.value
       if (el) elementCounters.value[el] = { nightmareCount: 0, catchCount: 0 }
     } else {
@@ -298,7 +318,9 @@ export const useHuntingStore = defineStore('hunting', () => {
     const log = logs.value[idx]
     // 回滚计数器（仅最新一条有效回滚）
     if (idx === 0) {
-      if (log.pool === 'element') {
+      if (log.pool === 'world') {
+        worldCounter.value.nightmareCount = Math.max(0, worldCounter.value.nightmareCount - 1)
+      } else if (log.pool === 'element') {
         const pet = SHINY_PETS.find(p => p.id === log.petId)
         const el = pet ? (Array.isArray(pet.element) ? pet.element[0] : pet.element) : ''
         if (el && elementCounters.value[el]) {
@@ -323,6 +345,7 @@ export const useHuntingStore = defineStore('hunting', () => {
       currentTargetId: currentTargetId.value,
       familyCounters: familyCounters.value,
       elementCounters: elementCounters.value,
+      worldCounter: worldCounter.value,
       logs: logs.value,
       collection: collection.value,
       items: items.value,
@@ -337,6 +360,7 @@ export const useHuntingStore = defineStore('hunting', () => {
       if (data.currentTargetId !== undefined) currentTargetId.value = data.currentTargetId
       if (data.familyCounters) familyCounters.value = data.familyCounters
       if (data.elementCounters) elementCounters.value = data.elementCounters
+      if (data.worldCounter) worldCounter.value = data.worldCounter
       if (data.logs) logs.value = data.logs
       if (data.collection) collection.value = data.collection
       if (data.items) items.value = data.items
@@ -354,6 +378,7 @@ export const useHuntingStore = defineStore('hunting', () => {
       currentTargetId: currentTargetId.value,
       familyCounters: { ...familyCounters.value },
       elementCounters: { ...elementCounters.value },
+      worldCounter: { ...worldCounter.value },
       logs: [...logs.value],
       collection: { ...collection.value },
       items: { ...items.value },
@@ -382,6 +407,7 @@ export const useHuntingStore = defineStore('hunting', () => {
     currentTargetId,
     familyCounters,
     elementCounters,
+    worldCounter,
     logs,
     collection,
     items,
@@ -391,6 +417,7 @@ export const useHuntingStore = defineStore('hunting', () => {
     currentFamilyCounter,
     currentElementKey,
     currentElementCounter,
+    currentWorldCounter,
     collectedCount,
     totalShinyCount,
     shinyLogs,

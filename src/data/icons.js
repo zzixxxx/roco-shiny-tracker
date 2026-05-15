@@ -69,6 +69,10 @@ export const ICON_TARGET = e(
 export const ICON_BOLT = e(
 `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><defs><linearGradient id="a" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f6d365"/><stop offset="100%" stop-color="#fda085"/></linearGradient></defs><path d="M28 4L14 26h8l-4 18L34 22h-8z" fill="url(#a)"/></svg>`)
 
+// 大世界池 - 地球
+export const ICON_WORLD_POOL = e(
+`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><defs><linearGradient id="a" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f7971e"/><stop offset="100%" stop-color="#ffd200"/></linearGradient></defs><circle cx="24" cy="24" r="18" stroke="url(#a)" stroke-width="2.5" fill="none"/><ellipse cx="24" cy="24" rx="10" ry="18" stroke="url(#a)" stroke-width="1.5" fill="none" opacity=".6"/><line x1="6" y1="24" x2="42" y2="24" stroke="url(#a)" stroke-width="1.5" opacity=".6"/><path d="M8 16h32M8 32h32" stroke="url(#a)" stroke-width="1.2" opacity=".4"/></svg>`)
+
 // 刷新
 export const ICON_REFRESH = e(
 `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><defs><linearGradient id="a" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#667eea"/><stop offset="100%" stop-color="#764ba2"/></linearGradient></defs><path d="M38 24c0 7.7-6.3 14-14 14s-14-6.3-14-14 6.3-14 14-14c5 0 9.4 2.6 11.9 6.5" stroke="url(#a)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M36 6v12h-12" stroke="url(#a)" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`)

@@ -41,7 +41,14 @@
           :class="{ active: activePool === 'element' }"
           @click="activePool = 'element'"
         >
-          <img :src="ICON_ELEMENT_POOL" class="inline-icon" /> 属性池
+          <img :src="ICON_ELEMENT_POOL" class="inline-icon" /> 系别池
+        </button>
+        <button
+          class="pool-tab"
+          :class="{ active: activePool === 'world' }"
+          @click="activePool = 'world'"
+        >
+          <img :src="ICON_WORLD_POOL" class="inline-icon" /> 大世界池
         </button>
       </div>
 
@@ -50,16 +57,19 @@
         <template v-if="activePool === 'family'">
           持续捕捉<strong>同一进化链</strong>精灵触发 · 出该家族污染
         </template>
+        <template v-else-if="activePool === 'element'">
+          持续捕捉<strong>同属性不同家族</strong>精灵触发 · 出同系别污染
+        </template>
         <template v-else>
-          持续捕捉<strong>同属性不同家族</strong>精灵触发 · 出赛季奇遇污染
+          捕捉<strong>其他属性</strong>精灵触发 · 出跨系别随机污染
         </template>
       </div>
 
-      <!-- 噩梦枷锁进度（双池） -->
+      <!-- 噩梦枷锁进度（三池） -->
       <div class="card counter-card">
         <div class="card-title">
-          <img :src="activePool === 'family' ? ICON_FAMILY : ICON_ELEMENT_POOL" class="inline-icon" />
-          {{ activePool === 'family' ? '家族池' : '属性池' }}噩梦枷锁
+          <img :src="activePoolIcon" class="inline-icon" />
+          {{ activePoolLabel }}噩梦枷锁
           <span v-if="activePool === 'element'" class="pool-element-tag">
             <img :src="ELEMENTS[store.currentElementKey]?.icon" class="el-icon" :title="elementTagName" />
             <span :style="{ color: elementTagColor }">{{ elementTagName }}</span>
@@ -91,7 +101,7 @@
 
       <!-- 连续捕捉计数 - 可编辑 -->
       <div class="card">
-        <div class="card-title"><img :src="ICON_CHAIN" class="inline-icon" /> 连续捕捉（{{ activePool === 'family' ? '家族池' : '属性池' }}）</div>
+        <div class="card-title"><img :src="ICON_CHAIN" class="inline-icon" /> 连续捕捉（{{ activePoolLabel }}）</div>
         <div class="catch-counter">
           <button class="btn btn-ghost btn-round" @click="store.decrementCatch(activePool)" :disabled="activeCounter.catchCount === 0">
             <span style="font-size: 20px">&minus;</span>
@@ -289,7 +299,7 @@ import { ref, reactive, computed } from 'vue'
 import { useHuntingStore } from '../stores/hunting.js'
 import { TRACKABLE_ITEMS } from '../data/items.js'
 import { ELEMENTS, SHINY_PETS } from '../data/pets.js'
-import { ICON_SHINY, ICON_POLLUTED, ICON_NORMAL, ICON_FAMILY, ICON_ELEMENT_POOL, ICON_SKULL, ICON_CHAIN, ICON_FADE, ICON_BAG, ICON_SUM, ICON_SCROLL, ICON_BATCH, ICON_REFRESH } from '../data/icons.js'
+import { ICON_SHINY, ICON_POLLUTED, ICON_NORMAL, ICON_FAMILY, ICON_ELEMENT_POOL, ICON_WORLD_POOL, ICON_SKULL, ICON_CHAIN, ICON_FADE, ICON_BAG, ICON_SUM, ICON_SCROLL, ICON_BATCH, ICON_REFRESH } from '../data/icons.js'
 import PageHeader from '../components/PageHeader.vue'
 import ProgressRing from '../components/ProgressRing.vue'
 import PetCard from '../components/PetCard.vue'
@@ -309,9 +319,17 @@ function selectTarget(petId) {
 // 池子切换
 const activePool = ref('family')
 
-const activeCounter = computed(() =>
-  activePool.value === 'element' ? store.currentElementCounter : store.currentFamilyCounter
-)
+const activeCounter = computed(() => {
+  if (activePool.value === 'world') return store.currentWorldCounter
+  if (activePool.value === 'element') return store.currentElementCounter
+  return store.currentFamilyCounter
+})
+
+const POOL_LABELS = { family: '家族池', element: '系别池', world: '大世界池' }
+const POOL_ICONS = { family: ICON_FAMILY, element: ICON_ELEMENT_POOL, world: ICON_WORLD_POOL }
+
+const activePoolLabel = computed(() => POOL_LABELS[activePool.value])
+const activePoolIcon = computed(() => POOL_ICONS[activePool.value])
 
 const targetElements = computed(() => {
   const t = store.currentTarget
@@ -351,7 +369,7 @@ function quickRecord(type) {
 
   // 提示文字
   const label = resultOptions.find(o => o.value === type)?.label || type
-  lastRecordMsg.value = `已记录：${label}（${activePool.value === 'family' ? '家族池' : '属性池'} 第 ${activeCounter.value.nightmareCount} 次）`
+  lastRecordMsg.value = `已记录：${label}（${activePoolLabel.value} 第 ${activeCounter.value.nightmareCount} 次）`
   clearTimeout(msgTimer)
   msgTimer = setTimeout(() => { lastRecordMsg.value = '' }, 2500)
 

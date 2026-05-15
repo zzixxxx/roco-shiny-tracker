@@ -15,7 +15,8 @@
       <div class="filter-label">卡池类型</div>
       <div class="filter-bar">
         <button class="filter-btn" :class="{ active: filterPool === 'family' }" @click="filterPool = filterPool === 'family' ? '' : 'family'">家族池</button>
-        <button class="filter-btn" :class="{ active: filterPool === 'element' }" @click="filterPool = filterPool === 'element' ? '' : 'element'">属性池</button>
+        <button class="filter-btn" :class="{ active: filterPool === 'element' }" @click="filterPool = filterPool === 'element' ? '' : 'element'">系别池</button>
+        <button class="filter-btn" :class="{ active: filterPool === 'world' }" @click="filterPool = filterPool === 'world' ? '' : 'world'">大世界池</button>
       </div>
     </div>
     <div class="filter-section">
@@ -55,7 +56,7 @@
           </div>
           <div class="log-meta">
             <span>
-              {{ log.pool === 'element' ? '属性池' : '家族池' }}
+              {{ { family: '家族池', element: '系别池', world: '大世界池' }[log.pool] || log.pool }}
               · 第{{ log.nightmareCount }}次
               <template v-if="log.catchesBeforeTrigger"> · 捕{{ log.catchesBeforeTrigger }}只触发</template>
             </span>
