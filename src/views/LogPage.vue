@@ -38,7 +38,7 @@
     <!-- 日志列表 -->
     <div v-if="filteredLogs.length > 0" class="log-list">
       <div
-        v-for="log in filteredLogs"
+        v-for="log in visibleLogs"
         :key="log.id"
         class="log-item"
         :class="'log-' + log.result"
@@ -66,6 +66,11 @@
         </div>
         <button class="log-delete" @click="deleteLog(log.id)" title="删除">
           &times;
+        </button>
+      </div>
+      <div v-if="filteredLogs.length > 3" class="text-center mt-8">
+        <button class="btn btn-ghost btn-sm" @click="showAllLogs = !showAllLogs">
+          {{ showAllLogs ? '收起' : `展开剩余 ${filteredLogs.length - 3} 条` }}
         </button>
       </div>
     </div>
@@ -251,6 +256,11 @@ const filteredLogs = computed(() => {
     return true
   })
 })
+
+const showAllLogs = ref(false)
+const visibleLogs = computed(() =>
+  showAllLogs.value ? filteredLogs.value : filteredLogs.value.slice(0, 3)
+)
 
 function getPetName(petId) {
   return SHINY_PETS.find(p => p.id === petId)?.name || petId
@@ -537,5 +547,11 @@ function submitEgg() {
 
 .log-content {
   cursor: pointer;
+}
+
+.list-more-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 6px 0;
 }
 </style>

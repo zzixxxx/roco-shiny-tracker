@@ -4,7 +4,7 @@
 
     <!-- 收集进度总览 -->
     <div class="card">
-      <div class="card-title"><img :src="ICON_SHINY" class="inline-icon" /> 异色收集进度</div>
+      <div class="card-title"><img :src="SHINY_LOGO" class="inline-icon" /> 异色收集进度</div>
       <div class="collection-overview">
         <ProgressRing
           :value="store.collectedCount"
@@ -35,7 +35,7 @@
 
     <!-- 当前刷取目标 -->
     <div class="card" @click="showTargetPicker = true">
-      <div class="card-title"><img :src="ICON_TARGET" class="inline-icon" /> 当前目标</div>
+      <div class="card-title"><img :src="PET_LOGO" class="inline-icon" /> 当前目标</div>
       <div v-if="store.currentTarget" class="target-display">
         <div class="target-name-row">
           <img v-if="store.currentTarget.imgShiny" :src="store.currentTarget.imgShiny" class="target-avatar" />
@@ -46,7 +46,7 @@
             <template v-for="(el, i) in targetElementArr" :key="el">
               <img :src="ELEMENTS[el]?.icon" class="el-icon" :title="ELEMENTS[el]?.name" />
               <span :style="{ color: ELEMENTS[el]?.color }">{{ ELEMENTS[el]?.name }}</span>
-              <span v-if="i < targetElementArr.length - 1" style="color:var(--text-muted)">/</span>
+              <span v-if="i < targetElementArr.length - 1" style="color:var(--text-muted)"> / </span>
             </template>
           </span>
           <span class="divider">|</span>
@@ -76,7 +76,7 @@
       <div class="card-title"><img :src="ICON_BOLT" class="inline-icon" /> 快捷操作</div>
       <div class="quick-actions">
         <router-link to="/counter" class="action-btn">
-          <img :src="ICON_TARGET" class="action-icon-img" />
+          <img :src="PET_LOGO" class="action-icon-img" />
           <span>开始计数</span>
         </router-link>
         <router-link to="/collection" class="action-btn">
@@ -92,7 +92,7 @@
           <span>数据统计</span>
         </router-link>
         <router-link to="/hatch-time" class="action-btn">
-          <img :src="ICON_EGG" class="action-icon-img" />
+          <img :src="EGG_LOGO" class="action-icon-img" />
           <span>孵蛋时间</span>
         </router-link>
       </div>
@@ -100,7 +100,7 @@
 
     <!-- 最近异色 -->
     <div v-if="recentShiny.length > 0" class="card">
-      <div class="card-title"><img :src="ICON_SHINY" class="inline-icon" /> 最近获得的异色</div>
+      <div class="card-title"><img :src="SHINY_LOGO" class="inline-icon" /> 最近获得的异色</div>
       <div v-for="log in recentShiny" :key="log.id" class="recent-shiny-item">
         <div class="shiny-dot"></div>
         <div class="recent-info">
@@ -142,7 +142,12 @@
 import { ref, computed } from 'vue'
 import { useHuntingStore } from '../stores/hunting.js'
 import { SHINY_PETS, ELEMENTS } from '../data/pets.js'
-import { ICON_SHINY, ICON_TARGET, ICON_BOLT, ICON_BOOK, ICON_SCROLL, ICON_CHART, ICON_EGG } from '../data/icons.js'
+import { ICON_TARGET, ICON_BOLT, ICON_BOOK, ICON_SCROLL, ICON_CHART } from '../data/icons.js'
+
+const BASE = import.meta.env.BASE_URL || '/'
+const SHINY_LOGO = `${BASE}icons/shiny.png`
+const EGG_LOGO = `${BASE}icons/egg.png`
+const PET_LOGO = `${BASE}icons/ui_pet_body.png`
 import PageHeader from '../components/PageHeader.vue'
 import ProgressRing from '../components/ProgressRing.vue'
 import PetCard from '../components/PetCard.vue'
@@ -322,6 +327,14 @@ function selectTarget(petId) {
   width: 28px;
   height: 28px;
   object-fit: contain;
+}
+.action-btn-icon-only {
+  padding: 8px;
+  justify-content: center;
+}
+.action-icon-img-large {
+  width: 56px;
+  height: 56px;
 }
 
 .recent-shiny-item {

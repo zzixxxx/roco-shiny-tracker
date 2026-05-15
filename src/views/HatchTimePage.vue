@@ -126,12 +126,10 @@
           class="chip chip-shiny"
           :class="{ active: shinyFilter === 'shiny' }"
           @click="shinyFilter = 'shiny'"
-        >仅看异色 ✨</button>
-        <button
-          class="chip"
-          :class="{ active: shinyFilter === 'non-shiny' }"
-          @click="shinyFilter = 'non-shiny'"
-        >仅看非异色</button>
+        >
+          <img :src="`${BASE}icons/shiny.png`" class="shiny-icon" alt="异色" />
+          仅看异色
+        </button>
       </div>
     </div>
 
@@ -152,7 +150,14 @@
           class="hatch-card"
         >
           <div class="hatch-avatar">
-            <img v-if="p.hasImg" :src="petImg(p.py)" :alt="p.baseName" class="pet-img" />
+            <img
+              v-if="p.hasImg && shinyFilter === 'shiny'"
+              :src="shinyImg(p.py)"
+              :alt="p.baseName + '异色'"
+              class="pet-img"
+              @error="(e) => onShinyImgError(e, p.py)"
+            />
+            <img v-else-if="p.hasImg" :src="petImg(p.py)" :alt="p.baseName" class="pet-img" />
             <span v-else class="placeholder">{{ p.baseName }}</span>
           </div>
           <div class="hatch-name">{{ p.name }}</div>
@@ -184,7 +189,7 @@ const searchQuery = ref('')   // 实际过滤用（与 selected 区分）
 const selected = ref(null)    // 通过下拉选中的具体精灵
 const typeFilter = ref('')
 const tierFilter = ref(0)
-const shinyFilter = ref('')   // '' | 'shiny' | 'non-shiny'
+const shinyFilter = ref('')   // '' | 'shiny'
 
 // 当前赛季异色清单 → 进化链最低级名字集合（HATCH_PETS 只含 stage 1）
 const shinyStage1Names = computed(() => {
@@ -201,6 +206,13 @@ const sugIndex = ref(-1)
 const BASE = import.meta.env.BASE_URL || '/'
 function petImg(py) {
   return `${BASE}hatch-pets/${py}.webp`
+}
+function shinyImg(py) {
+  return `${BASE}shiny-pets/${py}.webp`
+}
+function onShinyImgError(e, py) {
+  // 缺图 fallback 普通立绘
+  e.target.src = petImg(py)
 }
 
 const multiplier = computed(() => {
@@ -262,8 +274,6 @@ const filtered = computed(() => {
   }
   if (shinyFilter.value === 'shiny') {
     list = list.filter(p => shinyStage1Names.value.has(p.baseName))
-  } else if (shinyFilter.value === 'non-shiny') {
-    list = list.filter(p => !shinyStage1Names.value.has(p.baseName))
   }
   // 按图鉴 id 升序
   return [...list].sort((a, b) => a.id - b.id)
@@ -530,6 +540,12 @@ function resetSelection() {
   background: rgba(212, 160, 23, 0.12);
   border-color: var(--color-shiny);
   color: var(--color-shiny);
+}
+.shiny-icon {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  margin-right: 2px;
 }
 
 /* 列表头部 */

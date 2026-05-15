@@ -20,7 +20,7 @@
           <template v-for="(el, i) in targetElements" :key="el">
             <img :src="ELEMENTS[el]?.icon" class="el-icon" :title="ELEMENTS[el]?.name" />
             <span :style="{ color: ELEMENTS[el]?.color }" class="target-el-name">{{ ELEMENTS[el]?.name }}</span>
-            <span v-if="i < targetElements.length - 1" style="color:var(--text-muted);font-size:10px">/</span>
+            <span v-if="i < targetElements.length - 1" style="color:var(--text-muted);font-size:10px"> / </span>
           </template>
         </span>
         <span class="target-area">{{ store.currentTarget.area }}</span>
@@ -99,11 +99,11 @@
         </div>
       </div>
 
-      <!-- 连续捕捉计数 - 可编辑 -->
+      <!-- 连续捕捉计数 - 3 池并行 -->
       <div class="card">
-        <div class="card-title"><img :src="ICON_CHAIN" class="inline-icon" /> 连续捕捉（{{ activePoolLabel }}）</div>
+        <div class="card-title"><img :src="petLogo" class="inline-icon" /> 连续捕捉 <span class="title-hint">3 池同步累积</span></div>
         <div class="catch-counter">
-          <button class="btn btn-ghost btn-round" @click="store.decrementCatch(activePool)" :disabled="activeCounter.catchCount === 0">
+          <button class="btn btn-ghost btn-round" @click="store.decrementAllCatches()" :disabled="!canDecrementAll">
             <span style="font-size: 20px">&minus;</span>
           </button>
           <input
@@ -113,12 +113,17 @@
             class="catch-input"
             min="0"
           />
-          <button class="btn btn-primary btn-round" @click="store.incrementCatch(activePool)">
+          <button class="btn btn-primary btn-round" @click="store.incrementAllCatches()">
             <span style="font-size: 20px">+</span>
           </button>
         </div>
+        <div class="three-pool-counts">
+          <span :class="{ active: activePool === 'family' }">家族枷锁 {{ store.currentFamilyCounter.nightmareCount }}</span>
+          <span :class="{ active: activePool === 'element' }">系别枷锁 {{ store.currentElementCounter.nightmareCount }}</span>
+          <span :class="{ active: activePool === 'world' }">大世界枷锁 {{ store.currentWorldCounter.nightmareCount }}</span>
+        </div>
         <div class="catch-hint text-center mt-8">
-          连续捕捉 20~35 只可触发噩梦枷锁
+          每次 +1 同步给 3 池累积；输入框仅修改当前池
         </div>
       </div>
 
@@ -213,7 +218,7 @@
         <!-- 消耗汇总 -->
         <div class="card-title mt-12" style="margin-bottom:8px"><img :src="ICON_SUM" class="inline-icon" /> 消耗汇总</div>
         <div class="item-summary">
-          <div v-for="item in trackableItems" :key="item.key" class="item-sum-row">
+          <div v-for="item in visibleItemSummary" :key="item.key" class="item-sum-row">
             <img :src="item.img" class="ball-img" />
             <span class="item-sum-name">{{ item.name }}</span>
             <span class="item-sum-count">{{ store.items[item.key] || 0 }}</span>
@@ -240,9 +245,9 @@
               <button class="btn btn-ghost btn-sm" @click="editingLogId = ''">&#10005;</button>
             </div>
           </div>
-          <div v-if="store.itemLogs.length > 5" class="text-center mt-8">
+          <div v-if="store.itemLogs.length > 3" class="text-center mt-8">
             <button class="btn btn-ghost btn-sm" @click="showAllLogs = !showAllLogs">
-              {{ showAllLogs ? '收起' : `查看全部 ${store.itemLogs.length} 条` }}
+              {{ showAllLogs ? '收起' : `展开剩余 ${store.itemLogs.length - 3} 条` }}
             </button>
           </div>
         </div>
@@ -329,6 +334,13 @@ const POOL_LABELS = { family: '家族池', element: '系别池', world: '大世�
 const POOL_ICONS = { family: ICON_FAMILY, element: ICON_ELEMENT_POOL, world: ICON_WORLD_POOL }
 
 const activePoolLabel = computed(() => POOL_LABELS[activePool.value])
+
+// 3 池同步 -1 需要至少一池 > 0
+const canDecrementAll = computed(() =>
+  store.currentFamilyCounter.catchCount > 0
+  || store.currentElementCounter.catchCount > 0
+  || store.currentWorldCounter.catchCount > 0
+)
 const activePoolIcon = computed(() => POOL_ICONS[activePool.value])
 
 const targetElements = computed(() => {
@@ -415,10 +427,11 @@ const newItemAmount = ref(null)
 const editingLogId = ref('')
 const editAmount = ref(1)
 const showAllLogs = ref(false)
-
 const recentItemLogs = computed(() =>
-  showAllLogs.value ? store.itemLogs : store.itemLogs.slice(0, 5)
+  showAllLogs.value ? store.itemLogs : store.itemLogs.slice(0, 3)
 )
+const visibleItemSummary = computed(() => trackableItems)
+const petLogo = `${import.meta.env.BASE_URL || '/'}icons/ui_pet_body.png`
 
 function addItem() {
   if (!newItemKey.value || !newItemAmount.value || newItemAmount.value < 1) return
@@ -643,6 +656,25 @@ function confirmReset() {
 .catch-hint {
   font-size: 12px;
   color: var(--text-muted);
+}
+
+.three-pool-counts {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.three-pool-counts span {
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: var(--bg-input);
+}
+.three-pool-counts span.active {
+  background: rgba(102, 126, 234, 0.12);
+  color: var(--color-accent);
+  font-weight: 600;
 }
 
 .pet-list {
@@ -1063,5 +1095,12 @@ function confirmReset() {
 .item-pick.active .item-pick-name {
   color: var(--color-accent);
   font-weight: 600;
+}
+
+.list-more-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 6px 0;
+  text-align: center;
 }
 </style>

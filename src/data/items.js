@@ -23,12 +23,20 @@ export const CAPTURE_BALLS = [
 ]
 
 // 道具消耗追踪配置 - 用于计数器页面
-// 已去掉恢复瓶，属性球用暗星球图代表
+// 属性球已展开为 9 种（按系别），保留 5 种基础/特殊球
 export const TRACKABLE_ITEMS = [
   { key: 'normal_ball',   name: '普通咕噜球', img: `${W}/e/e1/suveiyd5wk5jgw2njxhbk01oar04bf4.png/100px-100002.png` },
   { key: 'advanced_ball', name: '高级咕噜球', img: `${W}/3/31/g8gdf44egqs1iohc6hf7lyaeprqyezx.png/100px-100003.png` },
   { key: 'king_ball',     name: '国王球',     img: `${W}/2/2e/jygbfxpdbup5weqy4zaqnyaw2fcfyrq.png/100px-100255.png` },
-  { key: 'type_ball',     name: '属性球',     img: `${W}/5/5a/hif6470l7ojdexwm72t9brp0f0x3h4x.png/100px-Img_daodanqiu.png` },
+  { key: 'beauty_ball',   name: '美妙球（萌/普通）',  img: `${W}/b/b0/6ywvdkywqprqvws7m4ogeldp9y19swt.png/100px-Img_haihaiqiu.png` },
+  { key: 'battle_ball',   name: '好战球（武/龙）',    img: `${W}/7/79/kdfs6bmfy54gk7ak70arjxug91zv1z5.png/100px-Img_lumangqiu.png` },
+  { key: 'photo_ball',    name: '光合球（草/光）',    img: `${W}/d/d5/i0k2vx3nsjzsbbpfzfbwf3dlin3ixn0.png/100px-Img_guangheqiu.png` },
+  { key: 'net_ball',      name: '网兜球（水/翼）',    img: `${W}/4/4b/60uvwzet0brdqlhtoa89domccpbo4hr.png/100px-Img_wangdiuqiu.png` },
+  { key: 'dark_ball',     name: '暗星球（幽/恶）',    img: `${W}/5/5a/hif6470l7ojdexwm72t9brp0f0x3h4x.png/100px-Img_daodanqiu.png` },
+  { key: 'temp_ball',     name: '调温球（火/冰）',    img: `${W}/0/0d/2fx8i8qxb62s1sj8dn08h9vhsnsim1t.png/100px-Img_tiaowenqiu.png` },
+  { key: 'insulate_ball', name: '绝缘球（电/毒）',    img: `${W}/0/0d/k1hb59umk1sisjh8cev5bvyzvavezvb.png/100px-Img_jueyuanqiu.png` },
+  { key: 'sand_ball',     name: '淘沙球（地/虫）',    img: `${W}/8/81/7pzswfbn9l7hip6ptdg7f2mo341ztui.png/100px-Img_shaliqiu.png` },
+  { key: 'morph_ball',    name: '变幻球（幻/机械）',  img: `${W}/9/97/t58zrpfzxopvj3ke3oi3v57mf6k05s0.png/100px-Img_miwuqiu.png` },
   { key: 'catch_light',   name: '捕光球',     img: `${W}/3/3b/ifv37q0ul8zw20zwq95hbl15x79scc4.png/100px-100792.png` },
   { key: 'prism_ball',    name: '棱镜球',     img: `${W}/9/9b/kkwd244su5nzzg5pj99volbt84ohied.png/100px-100795.png` },
 ]

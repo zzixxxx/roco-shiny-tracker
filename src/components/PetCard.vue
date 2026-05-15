@@ -15,7 +15,7 @@
         <template v-for="(el, i) in elementArr" :key="el">
           <img :src="ELEMENTS[el]?.icon" class="el-icon" :title="ELEMENTS[el]?.name" />
           <span :style="{ color: ELEMENTS[el]?.color }">{{ ELEMENTS[el]?.name }}</span>
-          <span v-if="i < elementArr.length - 1" style="color:var(--text-muted);margin:0 1px">/</span>
+          <span v-if="i < elementArr.length - 1" style="color:var(--text-muted);margin:0 1px"> / </span>
         </template>
       </div>
     </div>

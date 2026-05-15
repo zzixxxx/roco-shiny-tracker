@@ -43,14 +43,14 @@
         <div class="cc-avatar" :style="{ background: pet.imgShiny ? '#f5f6fa' : getElementColor(pet.element) }">
           <img v-if="pet.imgShiny" :src="pet.imgShiny" class="pet-img" />
           <span v-else class="cc-initial">{{ pet.name[0] }}</span>
-          <span v-if="isCollected(pet.id)" class="cc-check">&#10003;</span>
+          <img v-if="isCollected(pet.id)" :src="`${BASE}icons/shiny.png`" class="cc-check" alt="已收集" />
         </div>
         <div class="cc-name">{{ pet.name }}</div>
         <div class="cc-element">
           <template v-for="(el, i) in getElementArr(pet.element)" :key="el">
             <img :src="getElementIcon(el)" class="el-icon" :title="ELEMENTS[el]?.name" />
             <span :style="{ color: ELEMENTS[el]?.color }" style="font-size:11px">{{ ELEMENTS[el]?.name }}</span>
-            <span v-if="i < getElementArr(pet.element).length - 1" style="color:var(--text-muted);font-size:10px">/</span>
+            <span v-if="i < getElementArr(pet.element).length - 1" style="color:var(--text-muted);font-size:10px"> / </span>
           </template>
         </div>
       </div>
@@ -68,7 +68,7 @@
                   <template v-for="(el, i) in getElementArr(selectedPet.element)" :key="el">
                     <img :src="getElementIcon(el)" class="el-icon-lg" :title="ELEMENTS[el]?.name" />
                     <span :style="{ color: ELEMENTS[el]?.color }">{{ ELEMENTS[el]?.name }}</span>
-                    <span v-if="i < getElementArr(selectedPet.element).length - 1" style="color:var(--text-muted)">/</span>
+                    <span v-if="i < getElementArr(selectedPet.element).length - 1" style="color:var(--text-muted)"> / </span>
                   </template>
                 </div>
               </div>
@@ -185,12 +185,13 @@ const router = useRouter()
 const currentFilter = ref('all')
 const selectedPet = ref(null)
 const totalCount = SHINY_PETS.length
+const BASE = import.meta.env.BASE_URL || '/'
 
 const filters = [
   { label: '全部', value: 'all' },
   { label: '已收集', value: 'collected' },
   { label: '未收集', value: 'uncollected' },
-  { label: '赛季限定', value: 'season' },
+  { label: 'S1赛季限定', value: 'season' },
   { label: '常驻', value: 'permanent' },
 ]
 
@@ -365,19 +366,12 @@ function setAsTarget() {
 
 .cc-check {
   position: absolute;
-  bottom: -3px;
-  right: -3px;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--color-shiny);
-  color: #1a1a2e;
-  font-size: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  border: 2px solid rgba(26, 26, 62, 0.8);
+  bottom: -4px;
+  right: -4px;
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
 }
 
 .cc-name {

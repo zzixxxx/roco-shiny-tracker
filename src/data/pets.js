@@ -9,23 +9,23 @@ const W = 'https://patchwiki.biligame.com/images/rocom'
 const I = 'https://patchwiki.biligame.com/images/rocom/thumb'
 export const ELEMENTS = {
   normal:     { name: '普通', color: '#adb5bd', icon: `${I}/6/69/nc77midbqeafn7i2snh5a5h16ctdi0o.png/30px-图标_宠物_属性_普通.png` },
-  grass:      { name: '草系', color: '#51cf66', icon: `${I}/1/12/b8bsilucec9a98rsmqkmxt06c4mnnix.png/30px-图标_宠物_属性_草.png` },
-  fire:       { name: '火系', color: '#ff6b35', icon: `${I}/a/ab/8wvxz3p479e2b702afdqyzhx9340qgx.png/30px-图标_宠物_属性_火.png` },
-  water:      { name: '水系', color: '#4dabf7', icon: `${I}/d/d1/csqsyhq1k488329455xdlzdcybv6zjh.png/30px-图标_宠物_属性_水.png` },
-  light:      { name: '光系', color: '#ffd43b', icon: `${I}/d/de/pxfi7cg0j94c45uxf4itigu90wis7jr.png/30px-图标_宠物_属性_光.png` },
-  ground:     { name: '地系', color: '#d2a679', icon: `${I}/3/32/0w5pybmkd8qm306doqx8kh5onl1o8cq.png/30px-图标_宠物_属性_地.png` },
-  ice:        { name: '冰系', color: '#66d9e8', icon: `${I}/9/9b/oxnxxud1xhopw87c7mnawxijz8r1hns.png/30px-%E5%9B%BE%E6%A0%87_%E5%AE%A0%E7%89%A9_%E5%B1%9E%E6%80%A7_%E5%86%B0.png` },
-  dragon:     { name: '龙系', color: '#f06595', icon: `${I}/6/65/kgcg0hvl19o7up0ug8f42bbvhi71dke.png/30px-%E5%9B%BE%E6%A0%87_%E5%AE%A0%E7%89%A9_%E5%B1%9E%E6%80%A7_%E9%BE%99.png` },
-  electric:   { name: '电系', color: '#fcc419', icon: `${I}/0/02/iqzkamzcra945jsw5z6o8h9p30fv7db.png/30px-图标_宠物_属性_电.png` },
-  poison:     { name: '毒系', color: '#be4bdb', icon: `${I}/5/53/jnd3vijasgthdz2ukggyfpisd464r2v.png/30px-图标_宠物_属性_毒.png` },
-  bug:        { name: '虫系', color: '#94d82d', icon: `${I}/c/cb/q3mlwj270f67spwr934hpqx7hj62bm3.png/30px-图标_宠物_属性_虫.png` },
-  fighting:   { name: '武系', color: '#e8590c', icon: `${I}/5/52/q9hbq9nrnhjt7t86hy7sftv3e2e5fvx.png/30px-图标_宠物_属性_武.png` },
-  flying:     { name: '翼系', color: '#74c0fc', icon: `${I}/2/2b/p7wdw88ziupp84s1mr8t9t602psswzz.png/30px-图标_宠物_属性_翼.png` },
-  cute:       { name: '萌系', color: '#ff8cc8', icon: `${I}/5/5f/80jhk99eosjv1ld26wp7ljtmif27lfv.png/30px-图标_宠物_属性_萌.png` },
-  ghost:      { name: '幽系', color: '#9775fa', icon: `${I}/e/e7/ttqdi3zlz72g5dgmc8qg9ko4aorwllw.png/30px-图标_宠物_属性_幽.png` },
-  evil:       { name: '恶系', color: '#845ef7', icon: `${I}/3/3b/hrdmz7n0qt3bnmir9fdn7977fvleec0.png/30px-图标_宠物_属性_恶.png` },
-  mechanical: { name: '机械系', color: '#868e96', icon: `${I}/a/ad/fw81a2pvdickbcnq5rt17m6066cchcf.png/30px-%E5%9B%BE%E6%A0%87_%E5%AE%A0%E7%89%A9_%E5%B1%9E%E6%80%A7_%E6%9C%BA%E6%A2%B0.png` },
-  psychic:    { name: '幻系', color: '#da77f2', icon: `${I}/6/64/89miqle961qdw2tt56hb78bps6f34ci.png/30px-图标_宠物_属性_幻.png` },
+  grass:      { name: '草', color: '#51cf66', icon: `${I}/1/12/b8bsilucec9a98rsmqkmxt06c4mnnix.png/30px-图标_宠物_属性_草.png` },
+  fire:       { name: '火', color: '#ff6b35', icon: `${I}/a/ab/8wvxz3p479e2b702afdqyzhx9340qgx.png/30px-图标_宠物_属性_火.png` },
+  water:      { name: '水', color: '#4dabf7', icon: `${I}/d/d1/csqsyhq1k488329455xdlzdcybv6zjh.png/30px-图标_宠物_属性_水.png` },
+  light:      { name: '光', color: '#ffd43b', icon: `${I}/d/de/pxfi7cg0j94c45uxf4itigu90wis7jr.png/30px-图标_宠物_属性_光.png` },
+  ground:     { name: '地', color: '#d2a679', icon: `${I}/3/32/0w5pybmkd8qm306doqx8kh5onl1o8cq.png/30px-图标_宠物_属性_地.png` },
+  ice:        { name: '冰', color: '#66d9e8', icon: `${I}/9/9b/oxnxxud1xhopw87c7mnawxijz8r1hns.png/30px-%E5%9B%BE%E6%A0%87_%E5%AE%A0%E7%89%A9_%E5%B1%9E%E6%80%A7_%E5%86%B0.png` },
+  dragon:     { name: '龙', color: '#f06595', icon: `${I}/6/65/kgcg0hvl19o7up0ug8f42bbvhi71dke.png/30px-%E5%9B%BE%E6%A0%87_%E5%AE%A0%E7%89%A9_%E5%B1%9E%E6%80%A7_%E9%BE%99.png` },
+  electric:   { name: '电', color: '#fcc419', icon: `${I}/0/02/iqzkamzcra945jsw5z6o8h9p30fv7db.png/30px-图标_宠物_属性_电.png` },
+  poison:     { name: '毒', color: '#be4bdb', icon: `${I}/5/53/jnd3vijasgthdz2ukggyfpisd464r2v.png/30px-图标_宠物_属性_毒.png` },
+  bug:        { name: '虫', color: '#94d82d', icon: `${I}/c/cb/q3mlwj270f67spwr934hpqx7hj62bm3.png/30px-图标_宠物_属性_虫.png` },
+  fighting:   { name: '武', color: '#e8590c', icon: `${I}/5/52/q9hbq9nrnhjt7t86hy7sftv3e2e5fvx.png/30px-图标_宠物_属性_武.png` },
+  flying:     { name: '翼', color: '#74c0fc', icon: `${I}/2/2b/p7wdw88ziupp84s1mr8t9t602psswzz.png/30px-图标_宠物_属性_翼.png` },
+  cute:       { name: '萌', color: '#ff8cc8', icon: `${I}/5/5f/80jhk99eosjv1ld26wp7ljtmif27lfv.png/30px-图标_宠物_属性_萌.png` },
+  ghost:      { name: '幽', color: '#9775fa', icon: `${I}/e/e7/ttqdi3zlz72g5dgmc8qg9ko4aorwllw.png/30px-图标_宠物_属性_幽.png` },
+  evil:       { name: '恶', color: '#845ef7', icon: `${I}/3/3b/hrdmz7n0qt3bnmir9fdn7977fvleec0.png/30px-图标_宠物_属性_恶.png` },
+  mechanical: { name: '机械', color: '#868e96', icon: `${I}/a/ad/fw81a2pvdickbcnq5rt17m6066cchcf.png/30px-%E5%9B%BE%E6%A0%87_%E5%AE%A0%E7%89%A9_%E5%B1%9E%E6%80%A7_%E6%9C%BA%E6%A2%B0.png` },
+  psychic:    { name: '幻', color: '#da77f2', icon: `${I}/6/64/89miqle961qdw2tt56hb78bps6f34ci.png/30px-图标_宠物_属性_幻.png` },
 }
 
 // S1赛季异色精灵 - 共19种
@@ -255,9 +255,9 @@ export const RESULT_TYPES = {
 }
 
 export const CATEGORY_LABELS = {
-  season:     '赛季限定',
+  season:     'S1赛季限定',
   permanent:  '常驻异色',
-  battlepass: '高级战令',
+  battlepass: 'S1高级战令',
   collab:     '联动限定',
 }
 

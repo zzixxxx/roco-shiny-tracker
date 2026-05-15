@@ -172,29 +172,60 @@ export const useHuntingStore = defineStore('hunting', () => {
     }
   }
 
+  // 3 池并行 +1：一次捕捉同时给 family[currentTarget] + element[主属性] + world +1
+  // 对齐服务端"每次捕捉给 EVO + SKILLDAM + CHAOS 同时累积"的真实机制
+  function incrementAllCatches() {
+    const id = currentTargetId.value
+    if (id) {
+      _ensureFamily(id)
+      familyCounters.value[id].catchCount++
+    }
+    const el = currentElementKey.value
+    if (el) {
+      _ensureElement(el)
+      elementCounters.value[el].catchCount++
+    }
+    worldCounter.value.catchCount++
+  }
+
+  function decrementAllCatches() {
+    const id = currentTargetId.value
+    if (id && familyCounters.value[id]?.catchCount > 0) familyCounters.value[id].catchCount--
+    const el = currentElementKey.value
+    if (el && elementCounters.value[el]?.catchCount > 0) elementCounters.value[el].catchCount--
+    if (worldCounter.value.catchCount > 0) worldCounter.value.catchCount--
+  }
+
   // pool: 'family' | 'element' | 'world'
+  // 一次噩梦事件 = 3 池 nightmareCount 同步 +1（统一计数）；catchCount 仅清空被 activePool 选中的那一池
+  // 异色清空规则待后续基于 BONUS_EVENT_ACCU_POOL_CONF 的 is_not_change / max_count 字段分析后重新设计
   function recordNightmare(result, pool = 'family', note = '') {
     const id = currentTargetId.value
     if (!id) return
 
+    // 3 池 nightmareCount 都 +1
+    _ensureFamily(id)
+    familyCounters.value[id].nightmareCount++
+    const el = currentElementKey.value
+    if (el) {
+      _ensureElement(el)
+      elementCounters.value[el].nightmareCount++
+    }
+    worldCounter.value.nightmareCount++
+
+    // 记录"触发池"的 catchCount 作为本次触发前的连续捕捉数，并清空该池 catchCount
     let nmCount = 0
     let catches = 0
     if (pool === 'world') {
       catches = worldCounter.value.catchCount
-      worldCounter.value.nightmareCount++
       worldCounter.value.catchCount = 0
       nmCount = worldCounter.value.nightmareCount
     } else if (pool === 'element') {
-      const el = currentElementKey.value
-      _ensureElement(el)
-      catches = elementCounters.value[el].catchCount
-      elementCounters.value[el].nightmareCount++
-      elementCounters.value[el].catchCount = 0
-      nmCount = elementCounters.value[el].nightmareCount
+      catches = el ? elementCounters.value[el].catchCount : 0
+      if (el) elementCounters.value[el].catchCount = 0
+      nmCount = el ? elementCounters.value[el].nightmareCount : 0
     } else {
-      _ensureFamily(id)
       catches = familyCounters.value[id].catchCount
-      familyCounters.value[id].nightmareCount++
       familyCounters.value[id].catchCount = 0
       nmCount = familyCounters.value[id].nightmareCount
     }
@@ -217,7 +248,9 @@ export const useHuntingStore = defineStore('hunting', () => {
         collectedAt: log.timestamp,
         method: 'hunting',
       }
-      // 异色出现，清空对应卡池保底重新计算
+      // TODO 异色清空规则待重新设计：当前是只清 activePool，但需要基于解包数据
+      // (BONUS_EVENT_ACCU_POOL_CONF 的 is_not_change / max_count 字段) 确认服务端行为
+      // 可能需要：(a) 3 池都清空 / (b) 只清 activePool / (c) 按 max_count=2 限制单池触发次数
       if (pool === 'world') {
         worldCounter.value = { nightmareCount: 0, catchCount: 0 }
       } else if (pool === 'element') {
@@ -428,6 +461,8 @@ export const useHuntingStore = defineStore('hunting', () => {
     setCatchCount,
     incrementCatch,
     decrementCatch,
+    incrementAllCatches,
+    decrementAllCatches,
     recordNightmare,
     updateLog,
     resetCounter,
