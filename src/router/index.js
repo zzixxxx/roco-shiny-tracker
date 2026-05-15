@@ -26,6 +26,11 @@ const routes = [
     name: 'stats',
     component: () => import('../views/StatsPage.vue'),
   },
+  {
+    path: '/hatch-time',
+    name: 'hatch-time',
+    component: () => import('../views/HatchTimePage.vue'),
+  },
 ]
 
 export default createRouter({

@@ -91,6 +91,10 @@
           <img :src="ICON_CHART" class="action-icon-img" />
           <span>数据统计</span>
         </router-link>
+        <router-link to="/hatch-time" class="action-btn">
+          <img :src="ICON_EGG" class="action-icon-img" />
+          <span>孵蛋时间</span>
+        </router-link>
       </div>
     </div>
 
@@ -138,7 +142,7 @@
 import { ref, computed } from 'vue'
 import { useHuntingStore } from '../stores/hunting.js'
 import { SHINY_PETS, ELEMENTS } from '../data/pets.js'
-import { ICON_SHINY, ICON_TARGET, ICON_BOLT, ICON_BOOK, ICON_SCROLL, ICON_CHART } from '../data/icons.js'
+import { ICON_SHINY, ICON_TARGET, ICON_BOLT, ICON_BOOK, ICON_SCROLL, ICON_CHART, ICON_EGG } from '../data/icons.js'
 import PageHeader from '../components/PageHeader.vue'
 import ProgressRing from '../components/ProgressRing.vue'
 import PetCard from '../components/PetCard.vue'
