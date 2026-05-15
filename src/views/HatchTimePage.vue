@@ -114,6 +114,27 @@
       </div>
     </div>
 
+    <!-- 异色筛选（当前赛季 SHINY_PETS，新赛季扩 pets.js 即可） -->
+    <div class="card" style="padding:12px 14px">
+      <div class="chips-row">
+        <button
+          class="chip"
+          :class="{ active: shinyFilter === '' }"
+          @click="shinyFilter = ''"
+        >全部</button>
+        <button
+          class="chip chip-shiny"
+          :class="{ active: shinyFilter === 'shiny' }"
+          @click="shinyFilter = 'shiny'"
+        >仅看异色 ✨</button>
+        <button
+          class="chip"
+          :class="{ active: shinyFilter === 'non-shiny' }"
+          @click="shinyFilter = 'non-shiny'"
+        >仅看非异色</button>
+      </div>
+    </div>
+
     <!-- 列表 -->
     <div class="card" style="padding:8px">
       <div class="list-header">
@@ -152,7 +173,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import PageHeader from '../components/PageHeader.vue'
-import { ELEMENTS } from '../data/pets.js'
+import { ELEMENTS, SHINY_PETS } from '../data/pets.js'
 import { HATCH_PETS, HATCH_TIERS, ACCEL } from '../data/hatchPets.js'
 import { ICON_BOLT } from '../data/icons.js'
 
@@ -163,6 +184,17 @@ const searchQuery = ref('')   // 实际过滤用（与 selected 区分）
 const selected = ref(null)    // 通过下拉选中的具体精灵
 const typeFilter = ref('')
 const tierFilter = ref(0)
+const shinyFilter = ref('')   // '' | 'shiny' | 'non-shiny'
+
+// 当前赛季异色清单 → 进化链最低级名字集合（HATCH_PETS 只含 stage 1）
+const shinyStage1Names = computed(() => {
+  const s = new Set()
+  for (const p of SHINY_PETS) {
+    const stage1 = p.evolutionLine?.[0] || p.name
+    if (stage1) s.add(stage1)
+  }
+  return s
+})
 const showSug = ref(false)
 const sugIndex = ref(-1)
 
@@ -227,6 +259,11 @@ const filtered = computed(() => {
   }
   if (tierFilter.value) {
     list = list.filter(p => p.hatch === tierFilter.value)
+  }
+  if (shinyFilter.value === 'shiny') {
+    list = list.filter(p => shinyStage1Names.value.has(p.baseName))
+  } else if (shinyFilter.value === 'non-shiny') {
+    list = list.filter(p => !shinyStage1Names.value.has(p.baseName))
   }
   // 按图鉴 id 升序
   return [...list].sort((a, b) => a.id - b.id)
@@ -303,6 +340,7 @@ function resetSelection() {
   searchQuery.value = ''
   typeFilter.value = ''
   tierFilter.value = 0
+  shinyFilter.value = ''
 }
 </script>
 
@@ -487,6 +525,11 @@ function resetSelection() {
 .chip .el-icon {
   width: 14px;
   height: 14px;
+}
+.chip-shiny.active {
+  background: rgba(212, 160, 23, 0.12);
+  border-color: var(--color-shiny);
+  color: var(--color-shiny);
 }
 
 /* 列表头部 */
