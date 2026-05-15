@@ -1,0 +1,3 @@
+[submodule "data-source/aoe-top"]
+	path = data-source/aoe-top
+	url = https://github.com/aoe-top/rocom.aoe.top.git
