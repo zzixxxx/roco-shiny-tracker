@@ -476,17 +476,45 @@ function importJSON(evt) {
   reader.readAsText(file)
 }
 
-// 导出 - SVG 图片
-function exportSVG() {
+// 把 SVG 内所有 <image> 引用的图片 fetch 后转 base64 data URI 内嵌
+// 否则导出的 SVG 文件脱离原 server 时图片无法加载；PNG 转 canvas 时也会丢图
+async function inlineSvgImages(svgEl) {
+  const images = svgEl.querySelectorAll('image')
+  const tasks = []
+  for (const img of images) {
+    const href = img.getAttribute('href') || img.getAttributeNS('http://www.w3.org/1999/xlink', 'href')
+    if (!href || href.startsWith('data:')) continue
+    tasks.push((async () => {
+      try {
+        const res = await fetch(href)
+        if (!res.ok) throw new Error(res.status)
+        const blob = await res.blob()
+        const dataUrl = await new Promise((resolve, reject) => {
+          const reader = new FileReader()
+          reader.onload = () => resolve(reader.result)
+          reader.onerror = reject
+          reader.readAsDataURL(blob)
+        })
+        img.setAttribute('href', dataUrl)
+      } catch (e) {
+        // 加载失败的图就保留原 href，让 SVG 在原 server 仍能显示
+        console.warn('inline failed:', href, e)
+      }
+    })())
+  }
+  await Promise.all(tasks)
+}
+
+// 导出 - SVG 图片（精灵图 inline 为 data URI，脱离 server 也能看）
+async function exportSVG() {
   const svgEl = previewSvgRef.value
   if (!svgEl) return
-  // clone 一份，inline 计算样式，避免依赖外部 CSS
   const clone = svgEl.cloneNode(true)
-  // 移除拖动相关的 transform（确保导出的是当前位置）
-  // 把 viewBox 之外的 dragOffsets 已应用到 transform，clone 保留即可
   clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+  clone.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink')
   clone.setAttribute('width', svgEl.viewBox.baseVal.width)
   clone.setAttribute('height', svgEl.viewBox.baseVal.height)
+  await inlineSvgImages(clone)
   const xml = new XMLSerializer().serializeToString(clone)
   const blob = new Blob([`<?xml version="1.0" encoding="UTF-8"?>\n${xml}`], { type: 'image/svg+xml' })
   const safeName = (previewSeason.value?.title || 'season').replace(/[\\/:*?"<>|]/g, '_')
@@ -498,21 +526,21 @@ async function exportPNG() {
   const svgEl = previewSvgRef.value
   if (!svgEl) return
   const vb = svgEl.viewBox.baseVal
-  // 双倍像素清晰度
   const scale = 2
   const w = vb.width * scale
   const h = vb.height * scale
   const clone = svgEl.cloneNode(true)
   clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+  clone.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink')
   clone.setAttribute('width', w)
   clone.setAttribute('height', h)
+  // 关键：把精灵图 inline 为 data URI，canvas 才能 draw 出来（避免污染 canvas）
+  await inlineSvgImages(clone)
   const xml = new XMLSerializer().serializeToString(clone)
-  // 用 Image + canvas 转 PNG
   const blob = new Blob([xml], { type: 'image/svg+xml;charset=utf-8' })
   const url = URL.createObjectURL(blob)
   try {
     const img = new Image()
-    img.crossOrigin = 'anonymous'
     await new Promise((resolve, reject) => {
       img.onload = resolve
       img.onerror = reject
@@ -531,7 +559,7 @@ async function exportPNG() {
       downloadBlob(b, `异色传递_${safeName}.png`)
     }, 'image/png')
   } catch (e) {
-    alert('PNG 导出失败（可能是精灵图跨域）：' + e.message)
+    alert('PNG 导出失败：' + e.message)
   } finally {
     URL.revokeObjectURL(url)
   }
