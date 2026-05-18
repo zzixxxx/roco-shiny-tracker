@@ -80,20 +80,20 @@
           <span>开始计数</span>
         </router-link>
         <router-link to="/collection" class="action-btn">
-          <img :src="ICON_BOOK" class="action-icon-img" />
+          <img :src="SHINY_GRAY_LOGO" class="action-icon-img" />
           <span>异色图鉴</span>
         </router-link>
         <router-link to="/log" class="action-btn">
-          <img :src="ICON_SCROLL" class="action-icon-img" />
+          <img :src="LOG_LOGO" class="action-icon-img action-icon-gray" />
           <span>刷取日志</span>
         </router-link>
         <router-link to="/stats" class="action-btn">
-          <img :src="ICON_CHART" class="action-icon-img" />
+          <img :src="ICON_CHART_GRAY" class="action-icon-img" />
           <span>数据统计</span>
         </router-link>
-        <router-link to="/hatch-time" class="action-btn">
+        <router-link to="/egg" class="action-btn">
           <img :src="EGG_LOGO" class="action-icon-img" />
-          <span>孵蛋时间</span>
+          <span>蛋组查询</span>
         </router-link>
       </div>
     </div>
@@ -142,12 +142,14 @@
 import { ref, computed } from 'vue'
 import { useHuntingStore } from '../stores/hunting.js'
 import { SHINY_PETS, ELEMENTS } from '../data/pets.js'
-import { ICON_TARGET, ICON_BOLT, ICON_BOOK, ICON_SCROLL, ICON_CHART } from '../data/icons.js'
+import { ICON_TARGET, ICON_BOLT, ICON_BOOK, ICON_SCROLL, ICON_CHART_GRAY } from '../data/icons.js'
 
 const BASE = import.meta.env.BASE_URL || '/'
 const SHINY_LOGO = `${BASE}icons/shiny.png`
 const EGG_LOGO = `${BASE}icons/egg.png`
 const PET_LOGO = `${BASE}icons/ui_pet_body.png`
+const SHINY_GRAY_LOGO = `${BASE}icons/shiny-gray.png`
+const LOG_LOGO = `${BASE}icons/log.png`
 import PageHeader from '../components/PageHeader.vue'
 import ProgressRing from '../components/ProgressRing.vue'
 import PetCard from '../components/PetCard.vue'
@@ -335,6 +337,10 @@ function selectTarget(petId) {
 .action-icon-img-large {
   width: 56px;
   height: 56px;
+}
+.action-icon-gray {
+  filter: grayscale(1) brightness(0.85);
+  opacity: 0.8;
 }
 
 .recent-shiny-item {

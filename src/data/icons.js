@@ -11,6 +11,14 @@ export const ICON_POLLUTED = e(
 export const ICON_NORMAL = e(
 `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><circle cx="24" cy="24" r="16" stroke="#BBB" stroke-width="3" fill="none"/><line x1="18" y1="24" x2="30" y2="24" stroke="#CCC" stroke-width="2.5" stroke-linecap="round"/></svg>`)
 
+// 灰色放大镜 - 蛋组查询 tab 专用
+export const ICON_SEARCH = e(
+`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><circle cx="20" cy="20" r="13" stroke="#888" stroke-width="3.5" fill="none"/><circle cx="20" cy="20" r="13" stroke="#aaa" stroke-width="1" fill="none" opacity=".5"/><line x1="29" y1="29" x2="40" y2="40" stroke="#777" stroke-width="4" stroke-linecap="round"/></svg>`)
+
+// 灰色爱心 - 生蛋规划 tab 专用
+export const ICON_HEART_GRAY = e(
+`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><defs><linearGradient id="hg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#bdc1c6"/><stop offset="100%" stop-color="#9aa0a6"/></linearGradient></defs><path d="M24 42C24 42 6 30 6 18C6 12 10 8 16 8C20 8 23 11 24 14C25 11 28 8 32 8C38 8 42 12 42 18C42 30 24 42 24 42Z" fill="url(#hg)" stroke="#888" stroke-width="1.5"/></svg>`)
+
 // ===== 卡池 =====
 // 家族池 - 小房子/巢穴
 export const ICON_FAMILY = e(
@@ -48,6 +56,10 @@ export const ICON_GEAR = e(
 // 统计图表
 export const ICON_CHART = e(
 `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><defs><linearGradient id="a" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#43e97b"/><stop offset="100%" stop-color="#38f9d7"/></linearGradient></defs><rect x="8" y="28" width="8" height="14" rx="1.5" fill="url(#a)" opacity=".7"/><rect x="20" y="16" width="8" height="26" rx="1.5" fill="url(#a)" opacity=".85"/><rect x="32" y="8" width="8" height="34" rx="1.5" fill="url(#a)"/></svg>`)
+
+// ICON_CHART 的灰色版 - 数据统计用
+export const ICON_CHART_GRAY = e(
+`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><defs><linearGradient id="cg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#9aa0a6"/><stop offset="100%" stop-color="#bdc1c6"/></linearGradient></defs><rect x="8" y="28" width="8" height="14" rx="1.5" fill="url(#cg)" opacity=".7"/><rect x="20" y="16" width="8" height="26" rx="1.5" fill="url(#cg)" opacity=".85"/><rect x="32" y="8" width="8" height="34" rx="1.5" fill="url(#cg)"/></svg>`)
 
 // 孵蛋
 export const ICON_EGG = e(

@@ -9,9 +9,9 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml"
+      "src": "/roco-shiny-tracker/icons/shiny.png",
+      "sizes": "74x74",
+      "type": "image/png"
     }
   ]
 }
