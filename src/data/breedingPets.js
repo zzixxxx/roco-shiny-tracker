@@ -27,7 +27,7 @@ export const BREEDING_PETS = [
     "py": "miaomiao",
     "shinyPy": null,
     "element": [
-      "fire"
+      "grass"
     ],
     "eggGroup": [
       6,
@@ -40,7 +40,7 @@ export const BREEDING_PETS = [
     "py": "shuilanlan",
     "shinyPy": null,
     "element": [
-      "light"
+      "water"
     ],
     "eggGroup": [
       12
@@ -52,7 +52,7 @@ export const BREEDING_PETS = [
     "py": "huohua",
     "shinyPy": null,
     "element": [
-      "water"
+      "fire"
     ],
     "eggGroup": [
       12,
@@ -65,7 +65,7 @@ export const BREEDING_PETS = [
     "py": "caotouya",
     "shinyPy": null,
     "element": [
-      "fire"
+      "grass"
     ],
     "eggGroup": [
       3,
@@ -78,8 +78,8 @@ export const BREEDING_PETS = [
     "py": "emoding",
     "shinyPy": null,
     "element": [
-      "psychic",
-      "ghost"
+      "evil",
+      "flying"
     ],
     "eggGroup": [
       7
@@ -91,7 +91,7 @@ export const BREEDING_PETS = [
     "py": "emolang",
     "shinyPy": "emolang",
     "element": [
-      "psychic"
+      "evil"
     ],
     "eggGroup": [
       6
@@ -103,7 +103,7 @@ export const BREEDING_PETS = [
     "py": "yajiji",
     "shinyPy": null,
     "element": [
-      "grass"
+      "normal"
     ],
     "eggGroup": [
       5
@@ -115,7 +115,7 @@ export const BREEDING_PETS = [
     "py": "amiyate",
     "shinyPy": null,
     "element": [
-      "dragon"
+      "ground"
     ],
     "eggGroup": [
       11,
@@ -128,8 +128,8 @@ export const BREEDING_PETS = [
     "py": "bengbengzhongzi",
     "shinyPy": null,
     "element": [
-      "fire",
-      "fighting"
+      "grass",
+      "poison"
     ],
     "eggGroup": [
       8
@@ -141,7 +141,7 @@ export const BREEDING_PETS = [
     "py": "dishu",
     "shinyPy": null,
     "element": [
-      "dragon"
+      "ground"
     ],
     "eggGroup": [
       6
@@ -153,7 +153,8 @@ export const BREEDING_PETS = [
     "py": "lvcaojingling",
     "shinyPy": null,
     "element": [
-      "fire"
+      "grass",
+      "psychic"
     ],
     "eggGroup": [
       7,
@@ -166,7 +167,7 @@ export const BREEDING_PETS = [
     "py": "qilicao",
     "shinyPy": "qilicao",
     "element": [
-      "fire"
+      "grass"
     ],
     "eggGroup": [
       8
@@ -178,8 +179,8 @@ export const BREEDING_PETS = [
     "py": "pugongying",
     "shinyPy": null,
     "element": [
-      "fire",
-      "evil"
+      "grass",
+      "cute"
     ],
     "eggGroup": [
       8,
@@ -192,7 +193,7 @@ export const BREEDING_PETS = [
     "py": "yaji",
     "shinyPy": null,
     "element": [
-      "grass"
+      "normal"
     ],
     "eggGroup": [
       5
@@ -204,7 +205,7 @@ export const BREEDING_PETS = [
     "py": "xiaojiachong",
     "shinyPy": null,
     "element": [
-      "flying"
+      "bug"
     ],
     "eggGroup": [
       4,
@@ -217,7 +218,7 @@ export const BREEDING_PETS = [
     "py": "diudiu",
     "shinyPy": null,
     "element": [
-      "fire"
+      "grass"
     ],
     "eggGroup": [
       3
@@ -229,7 +230,7 @@ export const BREEDING_PETS = [
     "py": "yibeier",
     "shinyPy": null,
     "element": [
-      "fire"
+      "grass"
     ],
     "eggGroup": [
       8,
@@ -242,7 +243,7 @@ export const BREEDING_PETS = [
     "py": "youlingyang",
     "shinyPy": null,
     "element": [
-      "mechanical"
+      "ghost"
     ],
     "eggGroup": [
       6
@@ -254,7 +255,7 @@ export const BREEDING_PETS = [
     "py": "baifalanren",
     "shinyPy": null,
     "element": [
-      "grass"
+      "normal"
     ],
     "eggGroup": [
       9,
@@ -267,7 +268,7 @@ export const BREEDING_PETS = [
     "py": "jiyishi",
     "shinyPy": null,
     "element": [
-      "dragon"
+      "ground"
     ],
     "eggGroup": [
       11
@@ -279,7 +280,7 @@ export const BREEDING_PETS = [
     "py": "banbanke",
     "shinyPy": null,
     "element": [
-      "light"
+      "water"
     ],
     "eggGroup": [
       3
@@ -291,8 +292,8 @@ export const BREEDING_PETS = [
     "py": "xiaomifeng",
     "shinyPy": null,
     "element": [
-      "flying",
-      "ghost"
+      "bug",
+      "flying"
     ],
     "eggGroup": [
       4,
@@ -305,7 +306,7 @@ export const BREEDING_PETS = [
     "py": "xiaoyoulinglian",
     "shinyPy": null,
     "element": [
-      "mechanical"
+      "ghost"
     ],
     "eggGroup": [
       12
@@ -317,7 +318,7 @@ export const BREEDING_PETS = [
     "py": "xiaodujiaoshou",
     "shinyPy": null,
     "element": [
-      "ground"
+      "light"
     ],
     "eggGroup": [
       6,
@@ -330,8 +331,8 @@ export const BREEDING_PETS = [
     "py": "youlingshu",
     "shinyPy": null,
     "element": [
-      "mechanical",
-      "fire"
+      "ghost",
+      "grass"
     ],
     "eggGroup": [
       8,
@@ -344,8 +345,8 @@ export const BREEDING_PETS = [
     "py": "huyouli",
     "shinyPy": null,
     "element": [
-      "mechanical",
-      "fighting"
+      "ghost",
+      "poison"
     ],
     "eggGroup": [
       6,
@@ -358,8 +359,8 @@ export const BREEDING_PETS = [
     "py": "chuitouguan",
     "shinyPy": null,
     "element": [
-      "ghost",
-      "light"
+      "flying",
+      "water"
     ],
     "eggGroup": [
       5,
@@ -372,7 +373,7 @@ export const BREEDING_PETS = [
     "py": "huzhuquan",
     "shinyPy": "huzhuquan",
     "element": [
-      "water"
+      "fire"
     ],
     "eggGroup": [
       6
@@ -384,7 +385,7 @@ export const BREEDING_PETS = [
     "py": "gelanzhongzi",
     "shinyPy": "gelanzhongzi",
     "element": [
-      "fire"
+      "grass"
     ],
     "eggGroup": [
       8,
@@ -397,8 +398,8 @@ export const BREEDING_PETS = [
     "py": "linghu",
     "shinyPy": null,
     "element": [
-      "water",
-      "electric"
+      "fire",
+      "ice"
     ],
     "eggGroup": [
       6
@@ -410,8 +411,8 @@ export const BREEDING_PETS = [
     "py": "liezuanniao",
     "shinyPy": null,
     "element": [
-      "water",
-      "ghost"
+      "fire",
+      "flying"
     ],
     "eggGroup": [
       5,
@@ -424,8 +425,8 @@ export const BREEDING_PETS = [
     "py": "zhiyuhuowa",
     "shinyPy": "zhiyuru",
     "element": [
-      "water",
-      "evil"
+      "fire",
+      "cute"
     ],
     "eggGroup": [
       6,
@@ -438,7 +439,7 @@ export const BREEDING_PETS = [
     "py": "keaiyuan",
     "shinyPy": null,
     "element": [
-      "water"
+      "fire"
     ],
     "eggGroup": [
       2,
@@ -451,7 +452,7 @@ export const BREEDING_PETS = [
     "py": "keliji",
     "shinyPy": null,
     "element": [
-      "water"
+      "fire"
     ],
     "eggGroup": [
       5,
@@ -464,7 +465,7 @@ export const BREEDING_PETS = [
     "py": "huoweiwate",
     "shinyPy": null,
     "element": [
-      "water"
+      "fire"
     ],
     "eggGroup": [
       2
@@ -476,8 +477,8 @@ export const BREEDING_PETS = [
     "py": "daixiaolu",
     "shinyPy": null,
     "element": [
-      "fire",
-      "evil"
+      "grass",
+      "cute"
     ],
     "eggGroup": [
       6,
@@ -490,7 +491,7 @@ export const BREEDING_PETS = [
     "py": "lversongshu",
     "shinyPy": null,
     "element": [
-      "grass"
+      "normal"
     ],
     "eggGroup": [
       6
@@ -502,7 +503,7 @@ export const BREEDING_PETS = [
     "py": "xiaobushi",
     "shinyPy": null,
     "element": [
-      "dragon"
+      "ground"
     ],
     "eggGroup": [
       11,
@@ -515,7 +516,7 @@ export const BREEDING_PETS = [
     "py": "huociyanxiyi",
     "shinyPy": null,
     "element": [
-      "dragon"
+      "ground"
     ],
     "eggGroup": [
       3,
@@ -528,7 +529,8 @@ export const BREEDING_PETS = [
     "py": "maya",
     "shinyPy": null,
     "element": [
-      "dragon"
+      "ground",
+      "psychic"
     ],
     "eggGroup": [
       7,
@@ -541,8 +543,8 @@ export const BREEDING_PETS = [
     "py": "xiaotiantian",
     "shinyPy": null,
     "element": [
-      "light",
-      "evil"
+      "water",
+      "cute"
     ],
     "eggGroup": [
       7,
@@ -555,8 +557,8 @@ export const BREEDING_PETS = [
     "py": "fuzhousha",
     "shinyPy": null,
     "element": [
-      "light",
-      "ghost"
+      "water",
+      "flying"
     ],
     "eggGroup": [
       13,
@@ -569,7 +571,7 @@ export const BREEDING_PETS = [
     "py": "guodong",
     "shinyPy": null,
     "element": [
-      "light"
+      "water"
     ],
     "eggGroup": [
       13,
@@ -582,8 +584,8 @@ export const BREEDING_PETS = [
     "py": "feicuishuimu",
     "shinyPy": null,
     "element": [
-      "light",
-      "fighting"
+      "water",
+      "poison"
     ],
     "eggGroup": [
       13,
@@ -596,8 +598,8 @@ export const BREEDING_PETS = [
     "py": "daermaodou",
     "shinyPy": "daermaodou",
     "element": [
-      "electric",
-      "evil"
+      "ice",
+      "cute"
     ],
     "eggGroup": [
       7,
@@ -610,7 +612,7 @@ export const BREEDING_PETS = [
     "py": "dingding",
     "shinyPy": null,
     "element": [
-      "electric"
+      "ice"
     ],
     "eggGroup": [
       10,
@@ -623,7 +625,7 @@ export const BREEDING_PETS = [
     "py": "xiaoshijiu",
     "shinyPy": null,
     "element": [
-      "ghost"
+      "flying"
     ],
     "eggGroup": [
       6,
@@ -636,7 +638,7 @@ export const BREEDING_PETS = [
     "py": "yuanyanzhizhu",
     "shinyPy": null,
     "element": [
-      "flying"
+      "bug"
     ],
     "eggGroup": [
       4
@@ -648,8 +650,8 @@ export const BREEDING_PETS = [
     "py": "maomao",
     "shinyPy": null,
     "element": [
-      "flying",
-      "evil"
+      "bug",
+      "cute"
     ],
     "eggGroup": [
       4,
@@ -662,8 +664,8 @@ export const BREEDING_PETS = [
     "py": "xiaocaochong",
     "shinyPy": null,
     "element": [
-      "flying",
-      "fire"
+      "bug",
+      "grass"
     ],
     "eggGroup": [
       4,
@@ -676,7 +678,7 @@ export const BREEDING_PETS = [
     "py": "xiaoye",
     "shinyPy": null,
     "element": [
-      "psychic"
+      "evil"
     ],
     "eggGroup": [
       9,
@@ -689,7 +691,7 @@ export const BREEDING_PETS = [
     "py": "xiaolinggu",
     "shinyPy": null,
     "element": [
-      "mechanical"
+      "ghost"
     ],
     "eggGroup": [
       8,
@@ -702,7 +704,7 @@ export const BREEDING_PETS = [
     "py": "anyekulou",
     "shinyPy": "anyekulou",
     "element": [
-      "mechanical"
+      "ghost"
     ],
     "eggGroup": [
       12,
@@ -715,8 +717,8 @@ export const BREEDING_PETS = [
     "py": "duoduo",
     "shinyPy": null,
     "element": [
-      "fighting",
-      "dragon"
+      "poison",
+      "ground"
     ],
     "eggGroup": [
       9
@@ -728,7 +730,7 @@ export const BREEDING_PETS = [
     "py": "qiuluo",
     "shinyPy": null,
     "element": [
-      "fighting"
+      "poison"
     ],
     "eggGroup": [
       6,
@@ -741,7 +743,7 @@ export const BREEDING_PETS = [
     "py": "xiaoxiaoyutu",
     "shinyPy": null,
     "element": [
-      "fire"
+      "grass"
     ],
     "eggGroup": [
       6,
@@ -754,7 +756,7 @@ export const BREEDING_PETS = [
     "py": "fudishou",
     "shinyPy": null,
     "element": [
-      "grass"
+      "normal"
     ],
     "eggGroup": [
       6
@@ -766,7 +768,7 @@ export const BREEDING_PETS = [
     "py": "xiaoshitou",
     "shinyPy": null,
     "element": [
-      "dragon"
+      "ground"
     ],
     "eggGroup": [
       11,
@@ -779,7 +781,7 @@ export const BREEDING_PETS = [
     "py": "xuedouding",
     "shinyPy": null,
     "element": [
-      "electric"
+      "ice"
     ],
     "eggGroup": [
       9,
@@ -792,8 +794,8 @@ export const BREEDING_PETS = [
     "py": "kakayumao",
     "shinyPy": null,
     "element": [
-      "ghost",
-      "grass"
+      "flying",
+      "normal"
     ],
     "eggGroup": [
       5
@@ -805,7 +807,7 @@ export const BREEDING_PETS = [
     "py": "judulangzhu",
     "shinyPy": null,
     "element": [
-      "flying"
+      "bug"
     ],
     "eggGroup": [
       4,
@@ -818,8 +820,8 @@ export const BREEDING_PETS = [
     "py": "guiyankungchong",
     "shinyPy": null,
     "element": [
-      "psychic",
-      "flying"
+      "evil",
+      "bug"
     ],
     "eggGroup": [
       4,
@@ -832,7 +834,7 @@ export const BREEDING_PETS = [
     "py": "late",
     "shinyPy": "late",
     "element": [
-      "bug"
+      "electric"
     ],
     "eggGroup": [
       7
@@ -844,7 +846,7 @@ export const BREEDING_PETS = [
     "py": "dianmiemie",
     "shinyPy": null,
     "element": [
-      "bug"
+      "electric"
     ],
     "eggGroup": [
       6
@@ -856,7 +858,7 @@ export const BREEDING_PETS = [
     "py": "xiaoxingguang",
     "shinyPy": null,
     "element": [
-      "bug"
+      "electric"
     ],
     "eggGroup": [
       6
@@ -868,7 +870,7 @@ export const BREEDING_PETS = [
     "py": "shandianhuan",
     "shinyPy": null,
     "element": [
-      "bug"
+      "electric"
     ],
     "eggGroup": [
       12
@@ -880,7 +882,8 @@ export const BREEDING_PETS = [
     "py": "fenfenxing",
     "shinyPy": "fenfenxing",
     "element": [
-      "bug"
+      "electric",
+      "psychic"
     ],
     "eggGroup": [
       7,
@@ -892,7 +895,9 @@ export const BREEDING_PETS = [
     "name": "机械方方",
     "py": "jixiefangfang",
     "shinyPy": null,
-    "element": [],
+    "element": [
+      "mechanical"
+    ],
     "eggGroup": [
       15,
       9
@@ -904,7 +909,8 @@ export const BREEDING_PETS = [
     "py": "beise",
     "shinyPy": "beise",
     "element": [
-      "water"
+      "mechanical",
+      "fire"
     ],
     "eggGroup": [
       15
@@ -916,7 +922,8 @@ export const BREEDING_PETS = [
     "py": "duoxi",
     "shinyPy": null,
     "element": [
-      "dragon"
+      "mechanical",
+      "ground"
     ],
     "eggGroup": [
       15,
@@ -929,8 +936,8 @@ export const BREEDING_PETS = [
     "py": "xiaoyilong",
     "shinyPy": null,
     "element": [
-      "poison",
-      "ghost"
+      "dragon",
+      "flying"
     ],
     "eggGroup": [
       5,
@@ -943,7 +950,7 @@ export const BREEDING_PETS = [
     "py": "yileilong",
     "shinyPy": null,
     "element": [
-      "poison"
+      "dragon"
     ],
     "eggGroup": [
       14
@@ -955,8 +962,8 @@ export const BREEDING_PETS = [
     "py": "haibaozhanshi",
     "shinyPy": null,
     "element": [
-      "cute",
-      "light"
+      "fighting",
+      "water"
     ],
     "eggGroup": [
       6,
@@ -969,7 +976,7 @@ export const BREEDING_PETS = [
     "py": "jianfeimao",
     "shinyPy": null,
     "element": [
-      "cute"
+      "fighting"
     ],
     "eggGroup": [
       9
@@ -981,8 +988,8 @@ export const BREEDING_PETS = [
     "py": "guzhongshe",
     "shinyPy": null,
     "element": [
-      "evil",
-      "fighting"
+      "cute",
+      "poison"
     ],
     "eggGroup": [
       6,
@@ -995,7 +1002,7 @@ export const BREEDING_PETS = [
     "py": "juhuali",
     "shinyPy": null,
     "element": [
-      "evil"
+      "cute"
     ],
     "eggGroup": [
       8
@@ -1006,7 +1013,9 @@ export const BREEDING_PETS = [
     "name": "牵线木偶",
     "py": "qianxianmuou",
     "shinyPy": null,
-    "element": [],
+    "element": [
+      "psychic"
+    ],
     "eggGroup": [
       7,
       9
@@ -1018,7 +1027,7 @@ export const BREEDING_PETS = [
     "py": "xiaosongmao",
     "shinyPy": null,
     "element": [
-      "cute"
+      "fighting"
     ],
     "eggGroup": [
       6,
@@ -1030,7 +1039,9 @@ export const BREEDING_PETS = [
     "name": "哭哭菇",
     "py": "kukugu",
     "shinyPy": null,
-    "element": [],
+    "element": [
+      "psychic"
+    ],
     "eggGroup": [
       8
     ]
@@ -1041,7 +1052,7 @@ export const BREEDING_PETS = [
     "py": "xiaoyu",
     "shinyPy": null,
     "element": [
-      "ghost"
+      "flying"
     ],
     "eggGroup": [
       5
@@ -1053,7 +1064,7 @@ export const BREEDING_PETS = [
     "py": "benboshu",
     "shinyPy": null,
     "element": [
-      "dragon"
+      "ground"
     ],
     "eggGroup": [
       6,
@@ -1066,7 +1077,7 @@ export const BREEDING_PETS = [
     "py": "bulusi",
     "shinyPy": null,
     "element": [
-      "electric"
+      "ice"
     ],
     "eggGroup": [
       10,
@@ -1079,8 +1090,8 @@ export const BREEDING_PETS = [
     "py": "huhuzhu",
     "shinyPy": "huhuzhu",
     "element": [
-      "electric",
-      "dragon"
+      "ice",
+      "ground"
     ],
     "eggGroup": [
       6
@@ -1092,7 +1103,7 @@ export const BREEDING_PETS = [
     "py": "xieefangchui",
     "shinyPy": null,
     "element": [
-      "psychic"
+      "evil"
     ],
     "eggGroup": [
       7
@@ -1104,8 +1115,8 @@ export const BREEDING_PETS = [
     "py": "danxiaomanyu",
     "shinyPy": null,
     "element": [
-      "bug",
-      "light"
+      "electric",
+      "water"
     ],
     "eggGroup": [
       13
@@ -1117,8 +1128,8 @@ export const BREEDING_PETS = [
     "py": "datougulong",
     "shinyPy": null,
     "element": [
-      "poison",
-      "mechanical"
+      "dragon",
+      "ghost"
     ],
     "eggGroup": [
       14,
@@ -1131,8 +1142,8 @@ export const BREEDING_PETS = [
     "py": "lvyiniao",
     "shinyPy": null,
     "element": [
-      "evil",
-      "ghost"
+      "cute",
+      "flying"
     ],
     "eggGroup": [
       5,
@@ -1145,7 +1156,7 @@ export const BREEDING_PETS = [
     "py": "xuerongniao_chun",
     "shinyPy": null,
     "element": [
-      "ghost"
+      "flying"
     ],
     "eggGroup": [
       5
@@ -1157,7 +1168,7 @@ export const BREEDING_PETS = [
     "py": "xuerongniao_xia",
     "shinyPy": null,
     "element": [
-      "ghost"
+      "flying"
     ],
     "eggGroup": [
       5
@@ -1169,7 +1180,7 @@ export const BREEDING_PETS = [
     "py": "xuerongniao_qiu",
     "shinyPy": null,
     "element": [
-      "ghost"
+      "flying"
     ],
     "eggGroup": [
       5
@@ -1181,8 +1192,8 @@ export const BREEDING_PETS = [
     "py": "diudiu_huoshan",
     "shinyPy": null,
     "element": [
-      "fire",
-      "water"
+      "grass",
+      "fire"
     ],
     "eggGroup": [
       3
@@ -1194,8 +1205,8 @@ export const BREEDING_PETS = [
     "py": "diudiu_shamo",
     "shinyPy": null,
     "element": [
-      "fire",
-      "dragon"
+      "grass",
+      "ground"
     ],
     "eggGroup": [
       3
@@ -1207,8 +1218,8 @@ export const BREEDING_PETS = [
     "py": "diudiu_xueshan",
     "shinyPy": null,
     "element": [
-      "fire",
-      "electric"
+      "grass",
+      "ice"
     ],
     "eggGroup": [
       3
@@ -1220,8 +1231,8 @@ export const BREEDING_PETS = [
     "py": "bengbengzhongzi_caiyuqiu",
     "shinyPy": null,
     "element": [
-      "fire",
-      "fighting"
+      "grass",
+      "poison"
     ],
     "eggGroup": [
       8
@@ -1233,8 +1244,8 @@ export const BREEDING_PETS = [
     "py": "bengbengzhongzi_duanmaoqiu",
     "shinyPy": null,
     "element": [
-      "fire",
-      "fighting"
+      "grass",
+      "poison"
     ],
     "eggGroup": [
       8
@@ -1246,8 +1257,8 @@ export const BREEDING_PETS = [
     "py": "bengbengzhongzi_xiangyaqiu",
     "shinyPy": null,
     "element": [
-      "fire",
-      "fighting"
+      "grass",
+      "poison"
     ],
     "eggGroup": [
       8
@@ -1259,8 +1270,8 @@ export const BREEDING_PETS = [
     "py": "kuangjingchong",
     "shinyPy": null,
     "element": [
-      "ground",
-      "dragon"
+      "light",
+      "ground"
     ],
     "eggGroup": [
       10,
@@ -1273,8 +1284,8 @@ export const BREEDING_PETS = [
     "py": "xiaoshulan",
     "shinyPy": null,
     "element": [
-      "grass",
-      "light"
+      "normal",
+      "water"
     ],
     "eggGroup": [
       6,
@@ -1286,7 +1297,9 @@ export const BREEDING_PETS = [
     "name": "粉星仔",
     "py": "fenxingzai",
     "shinyPy": "fenxingzai",
-    "element": [],
+    "element": [
+      "psychic"
+    ],
     "eggGroup": [
       7,
       5
@@ -1298,8 +1311,8 @@ export const BREEDING_PETS = [
     "py": "haikuichong",
     "shinyPy": null,
     "element": [
-      "light",
-      "fighting"
+      "water",
+      "poison"
     ],
     "eggGroup": [
       13,
@@ -1312,7 +1325,7 @@ export const BREEDING_PETS = [
     "py": "xuewawa",
     "shinyPy": null,
     "element": [
-      "electric"
+      "ice"
     ],
     "eggGroup": [
       7
@@ -1324,8 +1337,8 @@ export const BREEDING_PETS = [
     "py": "huaguitianer",
     "shinyPy": null,
     "element": [
-      "ghost",
-      "light"
+      "flying",
+      "water"
     ],
     "eggGroup": [
       5,
@@ -1338,7 +1351,7 @@ export const BREEDING_PETS = [
     "py": "diandongchangjinglu",
     "shinyPy": null,
     "element": [
-      "bug"
+      "electric"
     ],
     "eggGroup": [
       6
@@ -1350,7 +1363,7 @@ export const BREEDING_PETS = [
     "py": "duudbao",
     "shinyPy": null,
     "element": [
-      "fighting"
+      "poison"
     ],
     "eggGroup": [
       7,
@@ -1362,7 +1375,9 @@ export const BREEDING_PETS = [
     "name": "幽星光",
     "py": "youxingguang",
     "shinyPy": null,
-    "element": [],
+    "element": [
+      "psychic"
+    ],
     "eggGroup": [
       7,
       2
@@ -1374,7 +1389,7 @@ export const BREEDING_PETS = [
     "py": "doudou",
     "shinyPy": null,
     "element": [
-      "evil"
+      "cute"
     ],
     "eggGroup": [
       6,
@@ -1387,8 +1402,8 @@ export const BREEDING_PETS = [
     "py": "xuanyanchong",
     "shinyPy": null,
     "element": [
-      "grass",
-      "flying"
+      "normal",
+      "bug"
     ],
     "eggGroup": [
       4,
@@ -1401,8 +1416,8 @@ export const BREEDING_PETS = [
     "py": "guguding",
     "shinyPy": null,
     "element": [
-      "dragon",
-      "fire"
+      "ground",
+      "grass"
     ],
     "eggGroup": [
       8
@@ -1414,7 +1429,7 @@ export const BREEDING_PETS = [
     "py": "shenlanjing",
     "shinyPy": null,
     "element": [
-      "light"
+      "water"
     ],
     "eggGroup": [
       13,
@@ -1427,8 +1442,8 @@ export const BREEDING_PETS = [
     "py": "shungdengyu",
     "shinyPy": "shungdengyu",
     "element": [
-      "light",
-      "bug"
+      "water",
+      "electric"
     ],
     "eggGroup": [
       13
@@ -1440,8 +1455,8 @@ export const BREEDING_PETS = [
     "py": "doudingyu",
     "shinyPy": null,
     "element": [
-      "light",
-      "poison"
+      "water",
+      "dragon"
     ],
     "eggGroup": [
       13,
@@ -1454,7 +1469,7 @@ export const BREEDING_PETS = [
     "py": "xingchenchong",
     "shinyPy": null,
     "element": [
-      "flying"
+      "bug"
     ],
     "eggGroup": [
       4
@@ -1465,7 +1480,9 @@ export const BREEDING_PETS = [
     "name": "缇塔",
     "py": "tita",
     "shinyPy": null,
-    "element": [],
+    "element": [
+      "mechanical"
+    ],
     "eggGroup": [
       15
     ]
@@ -1475,7 +1492,9 @@ export const BREEDING_PETS = [
     "name": "齿轮小子",
     "py": "chilunxiaozi",
     "shinyPy": null,
-    "element": [],
+    "element": [
+      "mechanical"
+    ],
     "eggGroup": [
       15
     ]
@@ -1485,7 +1504,9 @@ export const BREEDING_PETS = [
     "name": "权杖-Ⅱ",
     "py": "quanzhagn1",
     "shinyPy": null,
-    "element": [],
+    "element": [
+      "mechanical"
+    ],
     "eggGroup": [
       15
     ]
@@ -1496,7 +1517,7 @@ export const BREEDING_PETS = [
     "py": "gedouxiaowu",
     "shinyPy": null,
     "element": [
-      "cute"
+      "fighting"
     ],
     "eggGroup": [
       9
@@ -1508,7 +1529,7 @@ export const BREEDING_PETS = [
     "py": "gedouxiaoliu",
     "shinyPy": null,
     "element": [
-      "cute"
+      "fighting"
     ],
     "eggGroup": [
       9
@@ -1520,7 +1541,7 @@ export const BREEDING_PETS = [
     "py": "gedouxiaoba",
     "shinyPy": null,
     "element": [
-      "cute"
+      "fighting"
     ],
     "eggGroup": [
       9
@@ -1532,8 +1553,8 @@ export const BREEDING_PETS = [
     "py": "lihaixiaoluo",
     "shinyPy": null,
     "element": [
-      "fighting",
-      "psychic"
+      "poison",
+      "evil"
     ],
     "eggGroup": [
       9,
@@ -1546,8 +1567,8 @@ export const BREEDING_PETS = [
     "py": "haizhizhi_bilanshanhu",
     "shinyPy": null,
     "element": [
-      "light",
-      "mechanical"
+      "water",
+      "ghost"
     ],
     "eggGroup": [
       13,
@@ -1560,8 +1581,8 @@ export const BREEDING_PETS = [
     "py": "haizhizhi_xinghuangbaihe",
     "shinyPy": null,
     "element": [
-      "light",
-      "mechanical"
+      "water",
+      "ghost"
     ],
     "eggGroup": [
       13,
@@ -1574,8 +1595,8 @@ export const BREEDING_PETS = [
     "py": "haizhizhi_yanghongshading",
     "shinyPy": null,
     "element": [
-      "light",
-      "mechanical"
+      "water",
+      "ghost"
     ],
     "eggGroup": [
       13,
@@ -1588,8 +1609,8 @@ export const BREEDING_PETS = [
     "py": "haizhizhi_cuilvlunbu",
     "shinyPy": null,
     "element": [
-      "light",
-      "mechanical"
+      "water",
+      "ghost"
     ],
     "eggGroup": [
       13,
@@ -1602,8 +1623,8 @@ export const BREEDING_PETS = [
     "py": "xiaodianqie",
     "shinyPy": null,
     "element": [
-      "electric",
-      "bug"
+      "ice",
+      "electric"
     ],
     "eggGroup": [
       5
@@ -1615,8 +1636,8 @@ export const BREEDING_PETS = [
     "py": "chaizhachong",
     "shinyPy": "chaizhachong",
     "element": [
-      "water",
-      "fire"
+      "fire",
+      "grass"
     ],
     "eggGroup": [
       4,
@@ -1629,7 +1650,7 @@ export const BREEDING_PETS = [
     "py": "menhyou",
     "shinyPy": null,
     "element": [
-      "mechanical"
+      "ghost"
     ],
     "eggGroup": [
       12,
@@ -1642,8 +1663,8 @@ export const BREEDING_PETS = [
     "py": "mengyou_pink",
     "shinyPy": null,
     "element": [
-      "mechanical",
-      "ground"
+      "ghost",
+      "light"
     ],
     "eggGroup": [
       12,
@@ -1656,8 +1677,8 @@ export const BREEDING_PETS = [
     "py": "xiaoxingguang_yueguang",
     "shinyPy": null,
     "element": [
-      "bug",
-      "ground"
+      "electric",
+      "light"
     ],
     "eggGroup": [
       6
@@ -1669,8 +1690,8 @@ export const BREEDING_PETS = [
     "py": "pipaniao",
     "shinyPy": null,
     "element": [
-      "bug",
-      "ghost"
+      "electric",
+      "flying"
     ],
     "eggGroup": [
       5,
@@ -1683,7 +1704,7 @@ export const BREEDING_PETS = [
     "py": "yajiji_jijiya",
     "shinyPy": null,
     "element": [
-      "grass"
+      "normal"
     ],
     "eggGroup": [
       5
@@ -1695,7 +1716,7 @@ export const BREEDING_PETS = [
     "py": "dengyidengya",
     "shinyPy": null,
     "element": [
-      "grass"
+      "normal"
     ],
     "eggGroup": [
       5
@@ -1707,7 +1728,7 @@ export const BREEDING_PETS = [
     "py": "dishu_xushui",
     "shinyPy": null,
     "element": [
-      "dragon"
+      "ground"
     ],
     "eggGroup": [
       6
@@ -1719,7 +1740,8 @@ export const BREEDING_PETS = [
     "py": "yueyaxuexiong",
     "shinyPy": "yueyaxuexiong",
     "element": [
-      "electric"
+      "ice",
+      "psychic"
     ],
     "eggGroup": [
       6,
@@ -1732,7 +1754,8 @@ export const BREEDING_PETS = [
     "py": "xingyunlvzhe",
     "shinyPy": null,
     "element": [
-      "ghost"
+      "flying",
+      "psychic"
     ],
     "eggGroup": [
       6,
@@ -1745,7 +1768,7 @@ export const BREEDING_PETS = [
     "py": "xiaoshijiu_gaoshan",
     "shinyPy": null,
     "element": [
-      "ghost"
+      "flying"
     ],
     "eggGroup": [
       6,
@@ -1757,7 +1780,9 @@ export const BREEDING_PETS = [
     "name": "布瓜蝌",
     "py": "buguake",
     "shinyPy": null,
-    "element": [],
+    "element": [
+      "psychic"
+    ],
     "eggGroup": [
       3
     ]
@@ -1768,8 +1793,8 @@ export const BREEDING_PETS = [
     "py": "haikuichong_yidi",
     "shinyPy": null,
     "element": [
-      "light",
-      "fighting"
+      "water",
+      "poison"
     ],
     "eggGroup": [
       13,
@@ -1782,7 +1807,8 @@ export const BREEDING_PETS = [
     "py": "luoxuanpapa",
     "shinyPy": null,
     "element": [
-      "ghost"
+      "mechanical",
+      "flying"
     ],
     "eggGroup": [
       15,
@@ -1795,8 +1821,8 @@ export const BREEDING_PETS = [
     "py": "xiniou",
     "shinyPy": null,
     "element": [
-      "dragon",
-      "ghost"
+      "ground",
+      "flying"
     ],
     "eggGroup": [
       5,
@@ -1809,8 +1835,8 @@ export const BREEDING_PETS = [
     "py": "shouhualei",
     "shinyPy": null,
     "element": [
-      "ground",
-      "fire"
+      "light",
+      "grass"
     ],
     "eggGroup": [
       8
@@ -1822,7 +1848,7 @@ export const BREEDING_PETS = [
     "py": "yajiji_ranleya",
     "shinyPy": null,
     "element": [
-      "grass"
+      "normal"
     ],
     "eggGroup": [
       5
@@ -1834,8 +1860,8 @@ export const BREEDING_PETS = [
     "py": "xuanyechong_yidi",
     "shinyPy": null,
     "element": [
-      "grass",
-      "flying"
+      "normal",
+      "bug"
     ],
     "eggGroup": [
       4,
@@ -1848,7 +1874,7 @@ export const BREEDING_PETS = [
     "py": "gongpingge",
     "shinyPy": null,
     "element": [
-      "grass"
+      "normal"
     ],
     "eggGroup": [
       5
@@ -1860,7 +1886,7 @@ export const BREEDING_PETS = [
     "py": "shifuxi_yidi",
     "shinyPy": null,
     "element": [
-      "dragon"
+      "ground"
     ],
     "eggGroup": [
       3,
@@ -1873,8 +1899,8 @@ export const BREEDING_PETS = [
     "py": "huayuanman",
     "shinyPy": null,
     "element": [
-      "dragon",
-      "fire"
+      "ground",
+      "grass"
     ],
     "eggGroup": [
       13,
@@ -1887,8 +1913,8 @@ export const BREEDING_PETS = [
     "py": "boboluo",
     "shinyPy": null,
     "element": [
-      "dragon",
-      "light"
+      "ground",
+      "water"
     ],
     "eggGroup": [
       3,
@@ -1901,8 +1927,8 @@ export const BREEDING_PETS = [
     "py": "boboluo_yidi",
     "shinyPy": null,
     "element": [
-      "dragon",
-      "light"
+      "ground",
+      "water"
     ],
     "eggGroup": [
       3,
@@ -1915,7 +1941,7 @@ export const BREEDING_PETS = [
     "py": "banbanke_tuipi",
     "shinyPy": null,
     "element": [
-      "light"
+      "water"
     ],
     "eggGroup": [
       3
@@ -1927,7 +1953,7 @@ export const BREEDING_PETS = [
     "py": "lilayao",
     "shinyPy": null,
     "element": [
-      "light"
+      "water"
     ],
     "eggGroup": [
       13,
@@ -1940,7 +1966,7 @@ export const BREEDING_PETS = [
     "py": "haoeryu",
     "shinyPy": null,
     "element": [
-      "light"
+      "water"
     ],
     "eggGroup": [
       13,
@@ -1953,7 +1979,7 @@ export const BREEDING_PETS = [
     "py": "xuerongniao_dong",
     "shinyPy": null,
     "element": [
-      "ghost"
+      "flying"
     ],
     "eggGroup": [
       5
@@ -1965,7 +1991,7 @@ export const BREEDING_PETS = [
     "py": "banban",
     "shinyPy": null,
     "element": [
-      "ghost"
+      "flying"
     ],
     "eggGroup": [
       5
@@ -1977,8 +2003,8 @@ export const BREEDING_PETS = [
     "py": "wuda",
     "shinyPy": null,
     "element": [
-      "psychic",
-      "water"
+      "evil",
+      "fire"
     ],
     "eggGroup": [
       2
@@ -1990,8 +2016,8 @@ export const BREEDING_PETS = [
     "py": "wuda_yidi",
     "shinyPy": null,
     "element": [
-      "psychic",
-      "electric"
+      "evil",
+      "ice"
     ],
     "eggGroup": [
       2
@@ -2003,7 +2029,7 @@ export const BREEDING_PETS = [
     "py": "duoling",
     "shinyPy": null,
     "element": [
-      "mechanical"
+      "ghost"
     ],
     "eggGroup": [
       5,
@@ -2015,7 +2041,9 @@ export const BREEDING_PETS = [
     "name": "圣剑侍从",
     "py": "shengjianshicong",
     "shinyPy": null,
-    "element": [],
+    "element": [
+      "mechanical"
+    ],
     "eggGroup": [
       15,
       2
@@ -2027,8 +2055,8 @@ export const BREEDING_PETS = [
     "py": "qiqi",
     "shinyPy": null,
     "element": [
-      "cute",
-      "dragon"
+      "fighting",
+      "ground"
     ],
     "eggGroup": [
       7
@@ -2040,8 +2068,8 @@ export const BREEDING_PETS = [
     "py": "qiqi_yidi",
     "shinyPy": null,
     "element": [
-      "cute",
-      "dragon"
+      "fighting",
+      "ground"
     ],
     "eggGroup": [
       7
@@ -2053,7 +2081,7 @@ export const BREEDING_PETS = [
     "py": "lishu",
     "shinyPy": null,
     "element": [
-      "fighting"
+      "poison"
     ],
     "eggGroup": [
       6,
@@ -2066,7 +2094,7 @@ export const BREEDING_PETS = [
     "py": "xiaoheimao",
     "shinyPy": null,
     "element": [
-      "grass"
+      "normal"
     ],
     "eggGroup": [
       6,
@@ -2079,7 +2107,7 @@ export const BREEDING_PETS = [
     "py": "moyoushi",
     "shinyPy": null,
     "element": [
-      "mechanical"
+      "ghost"
     ],
     "eggGroup": [
       13,
@@ -2092,8 +2120,8 @@ export const BREEDING_PETS = [
     "py": "ciluntuo_yidi",
     "shinyPy": null,
     "element": [
-      "fighting",
-      "evil"
+      "poison",
+      "cute"
     ],
     "eggGroup": [
       13
@@ -2105,8 +2133,8 @@ export const BREEDING_PETS = [
     "py": "ciluntuo",
     "shinyPy": null,
     "element": [
-      "fighting",
-      "evil"
+      "poison",
+      "cute"
     ],
     "eggGroup": [
       13
@@ -2118,8 +2146,8 @@ export const BREEDING_PETS = [
     "py": "songzai",
     "shinyPy": null,
     "element": [
-      "fire",
-      "cute"
+      "grass",
+      "fighting"
     ],
     "eggGroup": [
       6
@@ -2131,8 +2159,8 @@ export const BREEDING_PETS = [
     "py": "shuidishe",
     "shinyPy": null,
     "element": [
-      "light",
-      "cute"
+      "water",
+      "fighting"
     ],
     "eggGroup": [
       3,
@@ -2145,8 +2173,8 @@ export const BREEDING_PETS = [
     "py": "xiaoyongshi",
     "shinyPy": null,
     "element": [
-      "water",
-      "cute"
+      "fire",
+      "fighting"
     ],
     "eggGroup": [
       6
@@ -2158,8 +2186,8 @@ export const BREEDING_PETS = [
     "py": "maotouxiaozhu",
     "shinyPy": null,
     "element": [
-      "flying",
-      "dragon"
+      "bug",
+      "ground"
     ],
     "eggGroup": [
       4,
@@ -2172,7 +2200,7 @@ export const BREEDING_PETS = [
     "py": "huajingling",
     "shinyPy": null,
     "element": [
-      "grass"
+      "normal"
     ],
     "eggGroup": [
       7,
@@ -2185,7 +2213,7 @@ export const BREEDING_PETS = [
     "py": "shumochong",
     "shinyPy": null,
     "element": [
-      "grass"
+      "normal"
     ],
     "eggGroup": [
       7,
@@ -2198,8 +2226,8 @@ export const BREEDING_PETS = [
     "py": "shiguangwengweng",
     "shinyPy": "shiguangwengweng",
     "element": [
-      "psychic",
-      "ground"
+      "evil",
+      "light"
     ],
     "eggGroup": [
       4
@@ -2210,7 +2238,10 @@ export const BREEDING_PETS = [
     "name": "不咕钟",
     "py": "buguzhong",
     "shinyPy": null,
-    "element": [],
+    "element": [
+      "mechanical",
+      "psychic"
+    ],
     "eggGroup": [
       15,
       5
@@ -2221,7 +2252,10 @@ export const BREEDING_PETS = [
     "name": "小箱怪",
     "py": "xiaoxiangguai",
     "shinyPy": null,
-    "element": [],
+    "element": [
+      "mechanical",
+      "psychic"
+    ],
     "eggGroup": [
       15,
       7
@@ -2233,8 +2267,8 @@ export const BREEDING_PETS = [
     "py": "guzhongshe_yidi",
     "shinyPy": null,
     "element": [
-      "evil",
-      "fighting"
+      "cute",
+      "poison"
     ],
     "eggGroup": [
       6,
@@ -2247,8 +2281,8 @@ export const BREEDING_PETS = [
     "py": "youyou",
     "shinyPy": null,
     "element": [
-      "dragon",
-      "ground"
+      "ground",
+      "light"
     ],
     "eggGroup": [
       6
@@ -2260,7 +2294,7 @@ export const BREEDING_PETS = [
     "py": "yajiji_qilaiya",
     "shinyPy": null,
     "element": [
-      "grass"
+      "normal"
     ],
     "eggGroup": [
       5
@@ -2272,7 +2306,7 @@ export const BREEDING_PETS = [
     "py": "huohongwei",
     "shinyPy": "huohongwei",
     "element": [
-      "water"
+      "fire"
     ],
     "eggGroup": [
       6
@@ -2284,7 +2318,7 @@ export const BREEDING_PETS = [
     "py": "shifuxi_yidi",
     "shinyPy": null,
     "element": [
-      "dragon"
+      "ground"
     ],
     "eggGroup": [
       3,
@@ -2307,6 +2341,7 @@ export const S1_DEFAULT_GROUPS = [
     "id": 2,
     "name": "巨灵组",
     "pets": [
+      "小独角兽",
       "空空颅",
       "月牙雪熊"
     ]
@@ -2328,7 +2363,8 @@ export const S1_DEFAULT_GROUPS = [
     "id": 5,
     "name": "天空组",
     "pets": [
-      "粉星仔"
+      "粉星仔",
+      "公平鸽"
     ]
   },
   {
@@ -2336,6 +2372,8 @@ export const S1_DEFAULT_GROUPS = [
     "name": "动物组",
     "pets": [
       "恶魔狼",
+      "小独角兽",
+      "灵狐",
       "治愈兔",
       "呼呼猪",
       "月牙雪熊",
@@ -2346,12 +2384,17 @@ export const S1_DEFAULT_GROUPS = [
     "id": 7,
     "name": "妖精组",
     "pets": [
+      "恶魔叮",
+      "幽影树",
       "格兰种子",
       "治愈兔",
       "大耳帽兜",
+      "小夜",
       "拉特",
       "粉粉星",
-      "粉星仔"
+      "牵线木偶",
+      "粉星仔",
+      "嘟嘟煲"
     ]
   },
   {
@@ -2359,7 +2402,9 @@ export const S1_DEFAULT_GROUPS = [
     "name": "植物组",
     "pets": [
       "奇丽草",
+      "幽影树",
       "格兰种子",
+      "菊花梨",
       "柴渣虫"
     ]
   },
@@ -2368,7 +2413,9 @@ export const S1_DEFAULT_GROUPS = [
     "name": "拟人组",
     "pets": [
       "大耳帽兜",
-      "机械方方"
+      "小夜",
+      "机械方方",
+      "牵线木偶"
     ]
   },
   {
@@ -2381,7 +2428,9 @@ export const S1_DEFAULT_GROUPS = [
   {
     "id": 11,
     "name": "大地组",
-    "pets": []
+    "pets": [
+      "嘟嘟煲"
+    ]
   },
   {
     "id": 12,

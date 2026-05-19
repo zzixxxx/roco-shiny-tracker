@@ -63,6 +63,18 @@
           >{{ s.title || `（未命名 ${i + 1}）` }}</button>
         </div>
 
+        <!-- 总图(isAll)的赛季筛选:非当前赛季精灵 dim(灰度+透明),不改变布局位置 -->
+        <div v-if="previewSeason?.isAll" class="season-view-filter">
+          <span class="svf-label">按赛季查看：</span>
+          <button
+            v-for="f in SEASON_VIEW_FILTERS"
+            :key="f.value"
+            class="svf-chip"
+            :class="{ active: viewSeasonFilter === f.value }"
+            @click="viewSeasonFilter = f.value"
+          >{{ f.label }}</button>
+        </div>
+
         <div v-if="!seasons.length" class="empty-state" style="padding:20px">
           <p>还没有异色传递</p>
           <p style="font-size: 12px; margin-top: 6px; opacity: 0.7;">
@@ -74,6 +86,7 @@
         <div v-if="!editMode && previewSeason" class="preview-svg-wrap">
           <div class="preview-actions tr">
             <button class="preview-btn" @click="resetLayout" title="清除拖动布局，恢复自动排版">↺</button>
+            <button class="preview-btn" :disabled="!dragHistory.length" @click="undoLastDrag" title="撤销上一次拖动 (Ctrl+Z)">↶</button>
             <button class="preview-btn" @click="editMode = true" title="编辑组员">✏</button>
             <button class="preview-btn danger" @click="removeSeason(selectedSeasonFilter)" title="删除当前传递">🗑</button>
           </div>
@@ -127,6 +140,7 @@
               v-for="(p, i) in layoutData.instances"
               :key="'pi-' + p.petName + '-' + p.groupId"
               class="pet-instance"
+              :class="{ dim: p.dim }"
               :data-key="`${p.petName}|${p.groupId}`"
               :transform="dragOffsets[`${p.petName}|${p.groupId}`]
                 ? `translate(${dragOffsets[`${p.petName}|${p.groupId}`].dx}, ${dragOffsets[`${p.petName}|${p.groupId}`].dy})` : ''"
@@ -172,16 +186,20 @@
             <div v-if="previewModalOpen" class="big-preview-overlay" @click.self="previewModalOpen = false">
               <div class="big-preview-toolbar">
                 <span class="big-preview-title">{{ previewSeason?.title || '异色传递' }}</span>
+                <span class="zoom-pct">{{ Math.round(bigZoom * 100) }}%</span>
                 <div class="big-zoom-controls">
+                  <button :disabled="!dragHistory.length" @click="undoLastDrag" title="撤销上一次拖动">↶</button>
                   <button @click="zoomOut" title="缩小">−</button>
-                  <button @click="zoomReset" title="重置">{{ Math.round(bigZoom * 100) }}%</button>
                   <button @click="zoomIn" title="放大">+</button>
+                  <button @click="zoomFit" title="自适应屏幕大小">⤢</button>
+                  <button @click="zoomReset" title="重置 100%">1:1</button>
                   <button class="big-preview-close" @click="previewModalOpen = false" title="关闭">×</button>
                 </div>
               </div>
-              <div class="big-preview-scroll" @click.self="previewModalOpen = false">
+              <div ref="bigPreviewScrollRef" class="big-preview-scroll" @click.self="previewModalOpen = false">
                 <svg
                   v-if="previewSeason"
+                  ref="bigPreviewSvgRef"
                   :viewBox="`0 0 ${layoutData.svgW} ${layoutData.svgH}`"
                   class="big-preview-svg"
                   :style="{ transform: `scale(${bigZoom})`, transformOrigin: 'center top' }"
@@ -222,6 +240,7 @@
                   v-for="(p, i) in layoutData.instances"
                   :key="'bpi-' + p.petName + '-' + p.groupId"
                   class="pet-instance"
+                  :class="{ dim: p.dim }"
                   :data-key="`${p.petName}|${p.groupId}`"
                   :transform="dragOffsets[`${p.petName}|${p.groupId}`]
                     ? `translate(${dragOffsets[`${p.petName}|${p.groupId}`].dx}, ${dragOffsets[`${p.petName}|${p.groupId}`].dy})` : ''"
@@ -272,6 +291,52 @@
             <div v-else class="season-title-view">{{ s.title || '（未命名赛季）' }}</div>
             <button v-if="editMode" class="btn btn-ghost btn-sm" @click="resetSeason(idx)" title="恢复默认">↺</button>
             <button v-if="editMode" class="icon-btn danger" @click="removeSeason(idx)" title="删除">&times;</button>
+          </div>
+          <!-- 全局添加精灵：不需要知道蛋组，输入精灵名/拼音 → 自动加到对应蛋组 -->
+          <div class="ga-wrap">
+            <div class="ga-input-row">
+              <input
+                v-model="globalAddInput"
+                @focus="onGlobalAddFocus"
+                @blur="onGlobalAddBlur"
+                @keydown="onGlobalAddKey"
+                class="input ga-input"
+                placeholder="🔍 输入精灵名/拼音 → 自动加到对应蛋组"
+              />
+              <div v-if="showGlobalSug && globalSuggestions.length" class="ga-sug-list">
+                <div
+                  v-for="(s, i) in globalSuggestions"
+                  :key="s.id"
+                  class="ga-sug-item"
+                  :class="{ active: i === globalSugIndex, dimmed: s.addedTo === s.eggGroup.length }"
+                  @mousedown.prevent="pickGlobalSuggestion(s)"
+                >
+                  <div class="ga-sug-icon">
+                    <img
+                      v-if="petShinyAvatarUrl(s.displayName)"
+                      :src="petShinyAvatarUrl(s.displayName)"
+                      :alt="s.displayName"
+                      @error="(e) => onImgErrorFallback(e, s.displayName)"
+                    />
+                  </div>
+                  <div class="ga-sug-text">
+                    <div class="ga-sug-name">{{ s.displayName }}</div>
+                    <div class="ga-sug-meta">
+                      <span v-for="(g, gi) in s.eggGroup" :key="g">
+                        <span v-if="gi > 0" class="ga-sep">·</span>
+                        <span :style="{ color: GROUP_COLOR[g] }">{{ EGG_GROUP_LABELS[g] }}</span>
+                      </span>
+                      <span v-if="s.addedTo > 0" class="ga-added">
+                        {{ s.addedTo === s.eggGroup.length ? '已全部加入' : `已加 ${s.addedTo}/${s.eggGroup.length}` }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div v-else-if="showGlobalSug && globalAddInput" class="ga-sug-list ga-empty">
+                没有匹配的精灵
+              </div>
+            </div>
           </div>
           <!-- 蛋组分布网格 -->
           <div class="group-grid">
@@ -360,7 +425,7 @@
           <input v-model="r.note" class="input record-note" placeholder="备注（个体值/性格/特长 等）" />
         </div>
         <datalist id="breeding-names">
-          <option v-for="p in BREEDING_PETS" :key="p.id" :value="p.name" />
+          <option v-for="d in BREEDING_DISPLAY_LIST" :key="d.id" :value="d.displayName" />
         </datalist>
         <p v-if="records.length" class="plan-foot">数据保存在浏览器本地，换设备会丢</p>
       </div>
@@ -378,37 +443,62 @@ import { ICON_SEARCH, ICON_HEART_GRAY } from '../data/icons.js'
 // 赛季异色传递规划：每赛季展示"异色精灵按蛋组分布"网格，可编辑
 import { SHINY_PETS } from '../data/pets.js'
 import { S1_DEFAULT_GROUPS, BREEDING_PETS, EGG_GROUP_LABELS } from '../data/breedingPets.js'
+import { HATCH_PETS } from '../data/hatchPets.js'
 const PLAN_KEY = 'roco-shiny-tracker-breeding-plan-v2'
+
+// 动态生成"全部异色"分布:跨赛季所有 SHINY_PETS 按 BREEDING_PETS.eggGroup 分布(stage 1)
+function buildAllDefaultGroups() {
+  const groups = Object.keys(EGG_GROUP_LABELS).map(Number).sort((a, b) => a - b).map(gid => ({
+    id: gid, name: EGG_GROUP_LABELS[gid], pets: [],
+  }))
+  const byGid = Object.fromEntries(groups.map(g => [g.id, g]))
+  for (const sp of SHINY_PETS) {
+    const stage1 = sp.evolutionLine?.[0] || sp.name
+    const bp = BREEDING_PETS.find(p => p.name === stage1)
+    if (!bp || !bp.eggGroup) continue  // S2 限定/战灵无解包数据 跳过
+    for (const gid of bp.eggGroup) {
+      if (byGid[gid] && !byGid[gid].pets.includes(stage1)) byGid[gid].pets.push(stage1)
+    }
+  }
+  return groups
+}
 
 function defaultSeasons() {
   return [{
-    title: 'S1·暗夜拾光',
-    groups: JSON.parse(JSON.stringify(S1_DEFAULT_GROUPS)),
+    title: '全部异色',
+    isAll: true,  // 标记总图:UI 显示赛季筛选 chips
+    groups: buildAllDefaultGroups(),
   }]
 }
 const seasons = ref(loadSeasons())
 function loadSeasons() {
+  let arr = null
   try {
     const raw = localStorage.getItem(PLAN_KEY)
     if (raw) {
-      const arr = JSON.parse(raw)
-      if (Array.isArray(arr) && arr[0]?.groups) return arr  // 新结构
+      const parsed = JSON.parse(raw)
+      if (Array.isArray(parsed) && parsed[0]?.groups) arr = parsed
     }
   } catch {}
-  return defaultSeasons()
+  if (!arr) return defaultSeasons()
+  // 迁移:旧数据没有 isAll 总图 → 末尾自动追加一个,保留原有图
+  if (!arr.some(s => s.isAll)) arr.push(defaultSeasons()[0])
+  return arr
 }
 watch(seasons, (v) => {
   try { localStorage.setItem(PLAN_KEY, JSON.stringify(v)) } catch {}
 }, { deep: true })
 
 function addSeason() {
+  // 默认名"自定义N",N 取未占用的最小正整数
+  let n = 1
+  while (seasons.value.some(s => s.title === `自定义${n}`)) n++
   seasons.value.push({
-    title: `S${seasons.value.length + 1}·新传递`,
+    title: `自定义${n}`,
     groups: Object.keys(EGG_GROUP_LABELS).map(Number).sort((a, b) => a - b).map(gid => ({
       id: gid, name: EGG_GROUP_LABELS[gid], pets: [],
     })),
   })
-  // 自动切到新加的赛季
   selectedSeasonFilter.value = seasons.value.length - 1
 }
 function removeSeason(idx) {
@@ -420,9 +510,15 @@ function removeSeason(idx) {
   }
 }
 function resetSeason(idx) {
-  if (confirm('恢复为 S1 默认分布？当前编辑会丢失')) {
-    seasons.value[idx].groups = JSON.parse(JSON.stringify(S1_DEFAULT_GROUPS))
-    seasons.value[idx].overrides = {}
+  const s = seasons.value[idx]
+  if (s.isAll) {
+    if (!confirm('恢复为「全部异色」默认分布？当前编辑会丢失')) return
+    s.groups = buildAllDefaultGroups()
+    s.overrides = {}
+  } else {
+    if (!confirm('清空所有精灵？')) return
+    for (const g of s.groups) g.pets = []
+    s.overrides = {}
   }
 }
 function resetLayout() {
@@ -605,11 +701,88 @@ function commitAddPet() {
   addPetInput.value = ''
 }
 
+// 全局添加精灵:输入精灵名/拼音 → 自动加到 BREEDING_PETS.eggGroup 对应的所有组
+const globalAddInput = ref('')
+const showGlobalSug = ref(false)
+const globalSugIndex = ref(-1)
+const globalSuggestions = computed(() => {
+  const q = globalAddInput.value.trim().toLowerCase()
+  if (!q) return []
+  const season = seasons.value[selectedSeasonFilter.value]
+  return BREEDING_DISPLAY_LIST
+    .filter(d => d.displayName.toLowerCase().includes(q) || (d.py || '').toLowerCase().includes(q))
+    .slice(0, 10)
+    .map(d => {
+      let addedTo = 0
+      if (season) for (const gid of d.eggGroup) {
+        const g = season.groups.find(x => x.id === gid)
+        if (g?.pets.includes(d.displayName)) addedTo++
+      }
+      return { ...d, addedTo }
+    })
+})
+function onGlobalAddFocus() { if (globalAddInput.value.trim()) showGlobalSug.value = true }
+function onGlobalAddBlur() { setTimeout(() => { showGlobalSug.value = false }, 180) }
+function onGlobalAddKey(e) {
+  showGlobalSug.value = !!globalAddInput.value.trim()
+  if (!showGlobalSug.value) return
+  if (e.key === 'ArrowDown') {
+    e.preventDefault()
+    globalSugIndex.value = Math.min(globalSugIndex.value + 1, globalSuggestions.value.length - 1)
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault()
+    globalSugIndex.value = Math.max(globalSugIndex.value - 1, -1)
+  } else if (e.key === 'Enter') {
+    e.preventDefault()
+    const pick = globalSugIndex.value >= 0
+      ? globalSuggestions.value[globalSugIndex.value]
+      : globalSuggestions.value[0]
+    if (pick) pickGlobalSuggestion(pick)
+  } else if (e.key === 'Escape') {
+    showGlobalSug.value = false
+  } else {
+    globalSugIndex.value = -1
+  }
+}
+function pickGlobalSuggestion(s) {
+  const season = seasons.value[selectedSeasonFilter.value]
+  if (!season) return
+  for (const gid of s.eggGroup) {
+    const g = season.groups.find(x => x.id === gid)
+    if (g && !g.pets.includes(s.displayName)) g.pets.push(s.displayName)
+  }
+  globalAddInput.value = ''
+  showGlobalSug.value = false
+  globalSugIndex.value = -1
+}
+
 // 编辑模式：默认 false 显示 SVG 交集图；true 显示网格编辑面板
 const editMode = ref(false)
 
 // 赛季筛选：seasons 数组下标，默认选第一个
 const selectedSeasonFilter = ref(0)
+
+// 总图(isAll)的赛季筛选:S1/S2/全部 → 不属于当前赛季的精灵 dim(灰度+透明)而非移除,保留布局位置
+const SEASON_VIEW_FILTERS = [
+  { label: '全部', value: 'all' },
+  { label: 'S1', value: 'S1' },
+  { label: 'S2', value: 'S2' },
+]
+const viewSeasonFilter = ref('all')
+// 切换图时如果不是总图,把筛选重置为全部(避免遗留)
+watch(selectedSeasonFilter, () => { viewSeasonFilter.value = 'all' })
+// 当前赛季 dim 集合:isAll + filter !== 'all' 时,标记非当前赛季精灵
+const dimmedPetSet = computed(() => {
+  const s = new Set()
+  if (!viewSeasonFilter.value || viewSeasonFilter.value === 'all') return s
+  for (const sp of SHINY_PETS) {
+    const seasonTag = sp.season || 'S1'
+    if (seasonTag !== viewSeasonFilter.value) {
+      s.add(sp.evolutionLine?.[0] || sp.name)
+    }
+  }
+  return s
+})
 
 // SVG 预览图：14 个有效蛋组在椭圆上均匀分布
 // 取当前筛选下要展示的赛季（默认第 0 个）
@@ -726,10 +899,31 @@ const layoutData = computed(() => {
   const CENTER_COL = 5
 
   if (centerGid) {
-    // 中心组成员：跨组多的优先（让跨组在中间），按字母二次排
-    const centerMembers = [...groupPets[centerGid]].sort((a, b) =>
-      petGroups[b].length - petGroups[a].length || a.localeCompare(b)
+    // 中心组排序:把"目的地相同"的桥成员相邻成簇,目的地组之间按扩展宽度升序(小目的地的桥放上面占少行,大目的地的桥放下面腾行)
+    // 扩展宽度 = 目的地组成员数 - 与中心组共享桥数;同扩展宽度优先桥多的(连接更紧密)
+    const _otherForSort = connectedGids.filter(g => g !== centerGid)
+    const _destInfo = {}
+    for (const gid of _otherForSort) {
+      const k = `${Math.min(centerGid, gid)}-${Math.max(centerGid, gid)}`
+      const shares = connect[k] || 0
+      _destInfo[gid] = { expansion: groupPets[gid].length - shares, bridges: shares }
+    }
+    const _destSort = _otherForSort.slice().sort((a, b) =>
+      _destInfo[a].expansion - _destInfo[b].expansion
+      || _destInfo[b].bridges - _destInfo[a].bridges
+      || a - b
     )
+    const _destIdx = new Map()
+    _destSort.forEach((g, i) => _destIdx.set(g, i))
+    const _primaryDest = (name) => {
+      const dests = petGroups[name].filter(g => g !== centerGid)
+      if (!dests.length) return Infinity  // 单桥成员(只在中心组出现)放最后
+      return Math.min(...dests.map(g => _destIdx.get(g) ?? Infinity))
+    }
+    const centerMembers = [...groupPets[centerGid]].sort((a, b) => {
+      const ia = _primaryDest(a), ib = _primaryDest(b)
+      return (ia === ib ? 0 : ia - ib) || a.localeCompare(b, 'zh-Hans-CN')
+    })
     centerMembers.forEach((name, rowIdx) => {
       petPlacement[name] = { row: rowIdx, col: CENTER_COL }
     })
@@ -741,21 +935,52 @@ const layoutData = computed(() => {
       return (connect[kb] || 0) - (connect[ka] || 0)
     })
 
-    // 碰撞检测：在指定 row 上找空 col（从 baseCol 出发，左或右方向找第一个空位）
     function isOccupied(row, col) {
       for (const p in petPlacement) {
         if (petPlacement[p].row === row && petPlacement[p].col === col) return true
       }
       return false
     }
-    function findFreeCol(row, baseCol, side) {
-      // side: -1 向左, +1 向右
-      let col = baseCol + side
-      while (isOccupied(row, col)) col += side
-      return col
+    // 非桥成员同行一步内被占时:在该组所有已放成员附近做 ring 搜索,选离该组最近的空格;同距偏好下方+右侧
+    function findCompactSlot(placedList) {
+      const cR = placedList.reduce((s, p) => s + p.row, 0) / placedList.length
+      const cC = placedList.reduce((s, p) => s + p.col, 0) / placedList.length
+      for (let d = 1; d <= 10; d++) {
+        const ring = []
+        const seen = new Set()
+        for (const anchor of placedList) {
+          for (let dr = -d; dr <= d; dr++) {
+            for (let dc = -d; dc <= d; dc++) {
+              if (Math.max(Math.abs(dr), Math.abs(dc)) !== d) continue
+              const r = anchor.row + dr, c = anchor.col + dc
+              if (r < 0 || c < 0) continue
+              const key = `${r},${c}`
+              if (seen.has(key)) continue
+              seen.add(key)
+              if (isOccupied(r, c)) continue
+              let minDist = Infinity
+              for (const a of placedList) {
+                const ad = Math.hypot(r - a.row, c - a.col)
+                if (ad < minDist) minDist = ad
+              }
+              ring.push({ r, c, minDist, centroidDist: Math.hypot(r - cR, c - cC) })
+            }
+          }
+        }
+        if (ring.length) {
+          ring.sort((a, b) =>
+            a.minDist - b.minDist
+            || a.centroidDist - b.centroidDist
+            || (b.r - a.r)  // 同距偏向下方
+            || (b.c - a.c)  // 同距偏向右侧
+          )
+          return { row: ring[0].r, col: ring[0].c }
+        }
+      }
+      return null
     }
 
-    // 多轮处理（间接相连的组在第 2/3 轮才能找到桥）
+    // 多轮处理(间接相连的组在第 2/3 轮才能找到桥)
     for (let pass = 0; pass < 4; pass++) {
       for (const gid of otherGids) {
         const members = groupPets[gid]
@@ -764,37 +989,87 @@ const layoutData = computed(() => {
         if (!bridges.length) continue
         const base = petPlacement[bridges[0]]
         const others = members.filter(p => !petPlacement[p])
-        // 沿 base.row 左右交替展开，遇到已占用的格子继续往同方向找
         let leftPtr = base.col, rightPtr = base.col
-        others.forEach((p, idx) => {
-          let side, col
-          if (idx % 2 === 0) {
-            leftPtr = findFreeCol(base.row, leftPtr, -1)
-            col = leftPtr
+        for (let idx = 0; idx < others.length; idx++) {
+          const p = others[idx]
+          const goLeft = (idx % 2 === 0)
+          const cand = goLeft ? leftPtr - 1 : rightPtr + 1
+          if (cand >= 0 && !isOccupied(base.row, cand)) {
+            if (goLeft) leftPtr = cand
+            else rightPtr = cand
+            petPlacement[p] = { row: base.row, col: cand }
           } else {
-            rightPtr = findFreeCol(base.row, rightPtr, +1)
-            col = rightPtr
+            // 同行一步内被占,做 ring 搜索就近放置(leftPtr/rightPtr 不前进,后续成员仍可尝试同行)
+            const placedNow = members.map(m => petPlacement[m]).filter(Boolean)
+            const slot = findCompactSlot(placedNow)
+            if (slot) petPlacement[p] = slot
           }
-          petPlacement[p] = { row: base.row, col }
-        })
+        }
       }
     }
   }
 
-  // 6. isolated 组 + 兜底：放在主区右下方独立行/列
-  const usedRows = Object.values(petPlacement).map(p => p.row)
-  let nextRow = (usedRows.length ? Math.max(...usedRows) : -1) + 2
-  const usedCols = Object.values(petPlacement).map(p => p.col)
-  const farRightCol = (usedCols.length ? Math.max(...usedCols) : CENTER_COL) + 3
-  for (const gid of isolatedGids) {
-    let allPlaced = true
-    groupPets[gid].forEach((name, idx) => {
-      if (petPlacement[name]) return
-      allPlaced = false
-      petPlacement[name] = { row: nextRow, col: farRightCol + idx }
-    })
-    if (!allPlaced) nextRow++
+  // 6. isolated 组：填主区空隙（8 邻居占用最少 + 离中心最近）；不再甩到右下角
+  const _isOcc = (r, c) => {
+    for (const p in petPlacement) {
+      if (petPlacement[p].row === r && petPlacement[p].col === c) return true
+    }
+    return false
   }
+  const _adj = (r, c) => {
+    let n = 0
+    for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
+      if (dr === 0 && dc === 0) continue
+      if (_isOcc(r + dr, c + dc)) n++
+    }
+    return n
+  }
+  const placedVals = Object.values(petPlacement)
+  let nextRow = (placedVals.length ? Math.max(...placedVals.map(p => p.row)) : -1) + 1
+  if (placedVals.length && isolatedGids.length) {
+    const minR = Math.min(...placedVals.map(p => p.row))
+    const maxR = Math.max(...placedVals.map(p => p.row))
+    const minC = Math.min(...placedVals.map(p => p.col))
+    const maxC = Math.max(...placedVals.map(p => p.col))
+    const cR = (minR + maxR) / 2
+    const cC = (minC + maxC) / 2
+    // 在主区 + 紧邻下方一行内找 N 个同行连续空格,按 (邻居总占用, 离中心距离) 字典序排
+    const pickSlots = (n) => {
+      const cands = []
+      for (let r = minR; r <= maxR + 1; r++) {
+        for (let cs = minC; cs <= maxC - n + 1; cs++) {
+          let ok = true
+          for (let k = 0; k < n; k++) if (_isOcc(r, cs + k)) { ok = false; break }
+          if (!ok) continue
+          let adj = 0
+          for (let k = 0; k < n; k++) adj += _adj(r, cs + k)
+          const dist = Math.hypot(r - cR, cs + (n - 1) / 2 - cC)
+          cands.push({ r, cs, adj, dist })
+        }
+      }
+      if (!cands.length) {
+        return Array.from({ length: n }, (_, k) => ({ row: maxR + 1, col: minC + k }))
+      }
+      cands.sort((a, b) => a.adj - b.adj || a.dist - b.dist)
+      return Array.from({ length: n }, (_, k) => ({ row: cands[0].r, col: cands[0].cs + k }))
+    }
+    for (const gid of isolatedGids) {
+      const need = groupPets[gid].filter(p => !petPlacement[p])
+      if (!need.length) continue
+      const slots = pickSlots(need.length)
+      need.forEach((name, i) => { petPlacement[name] = slots[i] })
+      const lastRow = Math.max(...slots.map(s => s.row))
+      if (lastRow >= nextRow) nextRow = lastRow + 1
+    }
+  } else {
+    // 退化:完全无 connected 组,isolated 组按行堆叠
+    for (const gid of isolatedGids) {
+      const need = groupPets[gid].filter(p => !petPlacement[p])
+      need.forEach((name, i) => { petPlacement[name] = { row: nextRow, col: i } })
+      if (need.length) nextRow++
+    }
+  }
+  // 兜底:漏掉的精灵
   for (const name in petGroups) {
     if (!petPlacement[name]) petPlacement[name] = { row: nextRow++, col: 0 }
   }
@@ -814,12 +1089,15 @@ const layoutData = computed(() => {
       y: START_Y + row * ROW_H + ROW_H / 2,
     }
   }
+  const isAllView = !!previewSeason.value.isAll
+  const dimSet = isAllView ? dimmedPetSet.value : null
   const instances = []
   for (const gid of Object.keys(groupPets).map(Number)) {
     for (const name of groupPets[gid]) {
       instances.push({
         petName: name,
         groupId: gid,
+        dim: !!dimSet && dimSet.has(name),
         ...posFor(name, gid),
       })
     }
@@ -980,24 +1258,75 @@ onUnmounted(() => {
 
 // 大图弹窗缩放
 const bigZoom = ref(1)
+const bigPreviewSvgRef = ref(null)
+const bigPreviewScrollRef = ref(null)
 function zoomIn() { bigZoom.value = Math.min(3, bigZoom.value + 0.25) }
-function zoomOut() { bigZoom.value = Math.max(0.5, bigZoom.value - 0.25) }
+function zoomOut() { bigZoom.value = Math.max(0.3, bigZoom.value - 0.25) }
 function zoomReset() { bigZoom.value = 1 }
+// 自适应屏幕大小:测量 SVG 未 scale 时的真实渲染尺寸跟 scroll 容器可视区比例,取较小者
+function zoomFit() {
+  const svgEl = bigPreviewSvgRef.value
+  const scrollEl = bigPreviewScrollRef.value
+  if (!svgEl || !scrollEl) return
+  const prev = svgEl.style.transform
+  svgEl.style.transform = 'none'  // 临时去 scale 测真实大小
+  const rect = svgEl.getBoundingClientRect()
+  svgEl.style.transform = prev
+  if (!rect.width || !rect.height) return
+  const pad = 40
+  const scaleW = (scrollEl.clientWidth - pad) / rect.width
+  const scaleH = (scrollEl.clientHeight - pad) / rect.height
+  bigZoom.value = Math.max(0.3, Math.min(scaleW, scaleH, 3))
+}
 watch(previewModalOpen, (open) => {
   if (open) {
     bigZoom.value = 1
-    nextTick(setupInteract)  // modal 里的 .pet-instance 元素新挂载，重绑 interact
+    nextTick(() => {
+      setupInteract()  // modal 里的 .pet-instance 元素新挂载,重绑 interact
+      // 等下一帧 SVG/scroll 容器 layout 完成再算自适应,否则 boundingRect 还是 0
+      requestAnimationFrame(zoomFit)
+    })
   }
 })
 
-// 精灵跨组关系：name -> [groupId, ...]（用于显示"传递桥"标记）
-const petGroupsMap = {}
-for (const p of BREEDING_PETS) petGroupsMap[p.name] = p.eggGroup
-function isBridgePet(name) {
-  return (petGroupsMap[name]?.length || 0) > 1
+// 重名精灵带括号区分(如鸭吉吉的多个形态)。优先用 HATCH_PETS 已有的「名字（形态）」格式;无对应则 fallback 到「名字（py）」
+const _hpById = {}
+for (const hp of HATCH_PETS) _hpById[hp.id] = hp
+const _byBare = {}
+for (const p of BREEDING_PETS) (_byBare[p.name] ||= []).push(p)
+const PET_DISPLAY_BY_ID = {}
+for (const [bare, arr] of Object.entries(_byBare)) {
+  if (arr.length === 1) PET_DISPLAY_BY_ID[arr[0].id] = bare
+  else for (const p of arr) PET_DISPLAY_BY_ID[p.id] = _hpById[p.id]?.name || `${bare}（${p.py}）`
 }
+// displayName -> BREEDING_PETS entry。bareName 也映射到首个 variant,保证 legacy 数据(如旧 season 里的"鸭吉吉")也能查到
+const PET_BY_DISPLAY = new Map()
+for (const p of BREEDING_PETS) {
+  PET_BY_DISPLAY.set(PET_DISPLAY_BY_ID[p.id], p)
+  if (!PET_BY_DISPLAY.has(p.name)) PET_BY_DISPLAY.set(p.name, p)
+}
+const petByDisplay = (name) => PET_BY_DISPLAY.get(name)
+// datalist / 全局添加用的全量精灵显示列表(自动去重 + 带括号)
+const BREEDING_DISPLAY_LIST = BREEDING_PETS.map(p => ({
+  id: p.id,
+  displayName: PET_DISPLAY_BY_ID[p.id],
+  py: p.py,
+  eggGroup: p.eggGroup,
+}))
+
+// SHINY_PETS by stage-1 name -> imgShiny(Wiki 链接)。覆盖 19 只异色 + 机械方方/绒绒/犀角鸟 等无本地 _yise 文件的
+const SHINY_BY_BARENAME = {}
+for (const sp of SHINY_PETS) {
+  const stage1 = sp.evolutionLine?.[0] || sp.name
+  if (sp.imgShiny) SHINY_BY_BARENAME[stage1] = sp
+}
+
+// 跨组关系
 function petAllGroups(name) {
-  return petGroupsMap[name] || []
+  return petByDisplay(name)?.eggGroup || []
+}
+function isBridgePet(name) {
+  return petAllGroups(name).length > 1
 }
 function petBridgeGroups(name, currentGroupId) {
   return petAllGroups(name).filter(g => g !== currentGroupId).map(g => EGG_GROUP_LABELS[g] || '?')
@@ -1020,21 +1349,19 @@ function petGradientStyle(name, currentGroupId) {
   return { background: `linear-gradient(135deg, ${stops})` }
 }
 
-// 反查精灵 py（用于显示头像）
-const petPyByName = {}
-for (const p of BREEDING_PETS) petPyByName[p.name] = p.py
 const BASE_URL = import.meta.env.BASE_URL || '/'
 function petAvatarUrl(name) {
-  const py = petPyByName[name]
-  return py ? `${BASE_URL}icons/friends/JL_${py}.webp` : ''
+  const p = petByDisplay(name)
+  return p?.py ? `${BASE_URL}icons/friends/JL_${p.py}.webp` : ''
 }
-// 异色立绘 - 用 BREEDING_PETS.shinyPy（脚本扫了 aoe-top _yise 集合 + 手动映射纠正）
-// 没异色立绘的精灵 shinyPy = null，这里 fallback 到 py（404 会触发 onImgErrorFallback）
-const petShinyPyByName = {}
-for (const p of BREEDING_PETS) petShinyPyByName[p.name] = p.shinyPy || p.py
+// 异色立绘三段:SHINY_PETS.imgShiny(Wiki) → 本地 _yise(仅 BREEDING_PETS 有 shinyPy 时;否则跳过避免 SVG <image> 404 不可靠的 error 事件 → 裂图) → 普通立绘
 function petShinyAvatarUrl(name) {
-  const py = petShinyPyByName[name]
-  return py ? `${BASE_URL}icons/friends/JL_${py}_yise.webp` : ''
+  const p = petByDisplay(name)
+  if (!p) return ''
+  const sp = SHINY_BY_BARENAME[p.name]
+  if (sp?.imgShiny) return sp.imgShiny
+  if (p.shinyPy) return `${BASE_URL}icons/friends/JL_${p.shinyPy}_yise.webp`
+  return p.py ? `${BASE_URL}icons/friends/JL_${p.py}.webp` : ''
 }
 // SVG <image> / 普通 <img> 加载失败时回退普通立绘
 function onImgErrorFallback(e, name) {
@@ -1081,8 +1408,8 @@ function removeRecord(id) {
 // 简易"是否能生蛋"分析：根据 BREEDING_PETS 查父母蛋组交集（BREEDING_PETS 已在顶部 import）
 function canBreed(rec) {
   if (!rec.parent1 || !rec.parent2) return null
-  const p1 = BREEDING_PETS.find(p => p.name === rec.parent1)
-  const p2 = BREEDING_PETS.find(p => p.name === rec.parent2)
+  const p1 = petByDisplay(rec.parent1)
+  const p2 = petByDisplay(rec.parent2)
   if (!p1 || !p2) return { ok: false, reason: '找不到精灵（可能不在 stage 1 或无法在家园生蛋）' }
   const common = p1.eggGroup.filter(g => p2.eggGroup.includes(g))
   if (common.length === 0) return { ok: false, reason: '蛋组无交集，不能配对' }
@@ -1379,7 +1706,16 @@ function setTab(t) {
   color: #fff;
   flex-shrink: 0;
 }
-.big-preview-title { font-size: 16px; font-weight: 700; }
+.big-preview-title { font-size: 16px; font-weight: 700; flex: 1; }
+.zoom-pct {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.7);
+  margin-right: 10px;
+  min-width: 42px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
 .big-zoom-controls {
   display: flex;
   align-items: center;
@@ -1523,4 +1859,138 @@ function setTab(t) {
 .record-note { margin-top: 8px; }
 .inline-icon { width: 18px; height: 18px; vertical-align: middle; margin-right: 4px; }
 .plan-placeholder { padding: 40px 16px; }
+
+/* 撤销按钮:dragHistory 为空时变灰 */
+.preview-btn:disabled,
+.big-zoom-controls button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* 全局添加精灵搜索框 */
+.ga-wrap {
+  margin: 10px 0 8px;
+}
+.ga-input-row {
+  position: relative;
+}
+.ga-input {
+  width: 100%;
+  font-size: 13px;
+  padding: 8px 12px;
+}
+.ga-sug-list {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 30;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  max-height: 320px;
+  overflow-y: auto;
+}
+.ga-sug-list.ga-empty {
+  padding: 10px 14px;
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+}
+.ga-sug-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-color);
+  transition: background 0.15s;
+}
+.ga-sug-item:last-child { border-bottom: none; }
+.ga-sug-item:hover,
+.ga-sug-item.active {
+  background: rgba(102,126,234,0.08);
+}
+.ga-sug-item.dimmed { opacity: 0.55; }
+.ga-sug-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg-input);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.ga-sug-icon img { width: 100%; height: 100%; object-fit: contain; }
+.ga-sug-text { flex: 1; min-width: 0; }
+.ga-sug-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ga-sug-meta {
+  font-size: 11px;
+  margin-top: 1px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 4px;
+  font-weight: 500;
+}
+.ga-sep { color: var(--text-muted); margin: 0 2px; }
+.ga-added {
+  margin-left: 6px;
+  padding: 1px 6px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #2d8a4a;
+  background: rgba(67,233,123,0.18);
+  border-radius: var(--radius-full);
+}
+
+/* 总图赛季筛选 chips */
+.season-view-filter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 10px 0 4px;
+}
+.svf-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+.svf-chip {
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.svf-chip:active { transform: scale(0.95); }
+.svf-chip.active {
+  background: rgba(102,126,234,0.1);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* dim 状态:总图按赛季筛选时,非当前赛季精灵灰度+半透明(保留位置) */
+.preview-svg :deep(.pet-instance.dim),
+:deep(.big-preview-svg .pet-instance.dim) {
+  opacity: 0.28;
+  filter: grayscale(1);
+  transition: opacity 0.2s, filter 0.2s;
+}
 </style>

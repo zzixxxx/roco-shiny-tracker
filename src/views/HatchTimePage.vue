@@ -152,10 +152,10 @@
           <div class="hatch-avatar">
             <img
               v-if="p.hasImg && shinyFilter === 'shiny'"
-              :src="shinyImg(p.py)"
+              :src="shinyImg(p)"
               :alt="p.baseName + '异色'"
               class="pet-img"
-              @error="(e) => onShinyImgError(e, p.py)"
+              @error="(e) => onShinyImgError(e, p)"
             />
             <img v-else-if="p.hasImg" :src="petImg(p.py)" :alt="p.baseName" class="pet-img" />
             <span v-else class="placeholder">{{ p.baseName }}</span>
@@ -179,6 +179,7 @@
 import { ref, computed } from 'vue'
 import PageHeader from '../components/PageHeader.vue'
 import { ELEMENTS, SHINY_PETS } from '../data/pets.js'
+import { BREEDING_PETS } from '../data/breedingPets.js'
 import { HATCH_PETS, HATCH_TIERS, ACCEL } from '../data/hatchPets.js'
 import { ICON_BOLT } from '../data/icons.js'
 
@@ -207,12 +208,27 @@ const BASE = import.meta.env.BASE_URL || '/'
 function petImg(py) {
   return `${BASE}hatch-pets/${py}.webp`
 }
-function shinyImg(py) {
-  return `${BASE}shiny-pets/${py}.webp`
+// 异色立绘:优先 BREEDING_PETS.shinyPy(如治愈兔 py=zhiyuhuowa shinyPy=zhiyuru),否则用 py;加载失败 fallback SHINY_PETS.imgShiny(Wiki),再失败 fallback 普通立绘
+const _shinyPyByPy = {}
+for (const bp of BREEDING_PETS) {
+  if (bp.shinyPy && bp.shinyPy !== bp.py) _shinyPyByPy[bp.py] = bp.shinyPy
 }
-function onShinyImgError(e, py) {
-  // 缺图 fallback 普通立绘
-  e.target.src = petImg(py)
+const _wikiShinyByName = {}
+for (const sp of SHINY_PETS) {
+  const stage1 = sp.evolutionLine?.[0] || sp.name
+  if (sp.imgShiny) _wikiShinyByName[stage1] = sp.imgShiny
+}
+function shinyImg(p) {
+  const sPy = _shinyPyByPy[p.py] || p.py
+  return `${BASE}shiny-pets/${sPy}.webp`
+}
+function onShinyImgError(e, p) {
+  const wiki = _wikiShinyByName[p.baseName]
+  if (wiki && e.target.src !== wiki) {
+    e.target.src = wiki
+    return
+  }
+  e.target.src = petImg(p.py)
 }
 
 const multiplier = computed(() => {

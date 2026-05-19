@@ -1,19 +1,30 @@
 <template>
   <div class="page">
-    <PageHeader title="异色图鉴" :subtitle="`S1赛季 · 共 ${totalCount} 种异色精灵`" />
+    <PageHeader title="异色图鉴" :subtitle="`${currentSeason}赛季 · 共 ${seasonTotalCount} 种异色精灵`" />
 
-    <!-- 进度条 -->
+    <!-- 赛季 tab -->
+    <div class="season-tabs">
+      <button
+        v-for="s in SEASONS"
+        :key="s.value"
+        class="season-tab"
+        :class="{ active: currentSeason === s.value }"
+        @click="currentSeason = s.value"
+      >{{ s.label }}</button>
+    </div>
+
+    <!-- 进度条（按当前赛季统计） -->
     <div class="card">
       <div class="flex justify-between items-center mb-8">
-        <span class="stat-label">收集进度</span>
+        <span class="stat-label">{{ currentSeason }} 收集进度</span>
         <span class="stat-value">
-          <span class="shiny-color">{{ store.collectedCount }}</span> / {{ totalCount }}
+          <span class="shiny-color">{{ seasonCollectedCount }}</span> / {{ seasonTotalCount }}
         </span>
       </div>
       <div class="progress-bar">
         <div
           class="progress-bar-fill shiny"
-          :style="{ width: (store.collectedCount / totalCount * 100) + '%' }"
+          :style="{ width: (seasonTotalCount ? seasonCollectedCount / seasonTotalCount * 100 : 0) + '%' }"
         ></div>
       </div>
     </div>
@@ -40,8 +51,9 @@
         :class="{ collected: isCollected(pet.id) }"
         @click="togglePet(pet)"
       >
-        <div class="cc-avatar" :style="{ background: pet.imgShiny ? '#f5f6fa' : getElementColor(pet.element) }">
+        <div class="cc-avatar" :style="{ background: (pet.imgShiny || petLocalImg(pet)) ? '#f5f6fa' : getElementColor(pet.element) }">
           <img v-if="pet.imgShiny" :src="pet.imgShiny" class="pet-img" />
+          <img v-else-if="petLocalImg(pet)" :src="petLocalImg(pet)" class="pet-img" />
           <span v-else class="cc-initial">{{ pet.name[0] }}</span>
           <img v-if="isCollected(pet.id)" :src="`${BASE}icons/shiny.png`" class="cc-check" alt="已收集" />
         </div>
@@ -74,10 +86,11 @@
               </div>
 
               <!-- 普通 & 异色 双形态对比 -->
-              <div v-if="selectedPet.img || selectedPet.imgShiny" class="detail-forms">
+              <div v-if="selectedPet.img || selectedPet.imgShiny || petLocalImg(selectedPet)" class="detail-forms">
                 <div class="form-card">
                   <div class="form-img-wrap">
                     <img v-if="selectedPet.img" :src="selectedPet.img" class="form-img" />
+                    <img v-else-if="petLocalImg(selectedPet)" :src="petLocalImg(selectedPet)" class="form-img" />
                     <div v-else class="form-placeholder" :style="{ background: getElementColor(selectedPet.element) }">
                       {{ selectedPet.name[0] }}
                     </div>
@@ -88,6 +101,7 @@
                 <div class="form-card form-card-shiny">
                   <div class="form-img-wrap shiny-glow">
                     <img v-if="selectedPet.imgShiny" :src="selectedPet.imgShiny" class="form-img" />
+                    <img v-else-if="petLocalImg(selectedPet)" :src="petLocalImg(selectedPet)" class="form-img" />
                     <div v-else class="form-placeholder" style="background: var(--color-shiny)">?</div>
                   </div>
                   <div class="form-label shiny-label"><img :src="ICON_SHINY" class="inline-icon" /> 异色形态</div>
@@ -176,6 +190,7 @@
 import { ref, computed } from 'vue'
 import { useHuntingStore } from '../stores/hunting.js'
 import { SHINY_PETS, ELEMENTS, CATEGORY_LABELS } from '../data/pets.js'
+import { BREEDING_PETS } from '../data/breedingPets.js'
 import { ICON_SHINY } from '../data/icons.js'
 import PageHeader from '../components/PageHeader.vue'
 import { useRouter } from 'vue-router'
@@ -184,31 +199,44 @@ const store = useHuntingStore()
 const router = useRouter()
 const currentFilter = ref('all')
 const selectedPet = ref(null)
-const totalCount = SHINY_PETS.length
 const BASE = import.meta.env.BASE_URL || '/'
+
+// 赛季 tab。最新赛季放最前面 + 默认选中;已存在的 19 只老数据没 season 字段,默认归为 S1
+const SEASONS = [
+  { label: 'S2赛季', value: 'S2' },
+  { label: 'S1赛季', value: 'S1' },
+]
+const currentSeason = ref(SEASONS[0].value)
+const seasonPets = computed(() => SHINY_PETS.filter(p => (p.season || 'S1') === currentSeason.value))
+const seasonTotalCount = computed(() => seasonPets.value.length)
+const seasonCollectedCount = computed(() => seasonPets.value.filter(p => store.collection[p.id]?.collected).length)
 
 const filters = [
   { label: '全部', value: 'all' },
   { label: '已收集', value: 'collected' },
   { label: '未收集', value: 'uncollected' },
-  { label: 'S1赛季限定', value: 'season' },
+  { label: '赛季限定', value: 'season' },
   { label: '常驻', value: 'permanent' },
 ]
 
+// SHINY_PETS 没 img/imgShiny 时,回退到 BREEDING_PETS 的本地立绘(普通图);两边都没有则保持占位
+const _petPyByBareName = {}
+for (const p of BREEDING_PETS) {
+  if (!_petPyByBareName[p.name]) _petPyByBareName[p.name] = p.py
+}
+function petLocalImg(pet) {
+  const stage1 = pet.evolutionLine?.[0] || pet.name
+  const py = _petPyByBareName[stage1]
+  return py ? `${BASE}icons/friends/JL_${py}.webp` : ''
+}
+
 const filteredPets = computed(() => {
-  if (currentFilter.value === 'collected') {
-    return SHINY_PETS.filter(p => store.collection[p.id]?.collected)
-  }
-  if (currentFilter.value === 'uncollected') {
-    return SHINY_PETS.filter(p => !store.collection[p.id]?.collected)
-  }
-  if (currentFilter.value === 'season') {
-    return SHINY_PETS.filter(p => p.category === 'season')
-  }
-  if (currentFilter.value === 'permanent') {
-    return SHINY_PETS.filter(p => p.category === 'permanent')
-  }
-  return SHINY_PETS
+  const base = seasonPets.value
+  if (currentFilter.value === 'collected') return base.filter(p => store.collection[p.id]?.collected)
+  if (currentFilter.value === 'uncollected') return base.filter(p => !store.collection[p.id]?.collected)
+  if (currentFilter.value === 'season') return base.filter(p => p.category === 'season')
+  if (currentFilter.value === 'permanent') return base.filter(p => p.category === 'permanent')
+  return base
 })
 
 const petLogs = computed(() =>
@@ -288,6 +316,31 @@ function setAsTarget() {
 
 .shiny-color {
   color: var(--color-shiny);
+}
+
+.season-tabs {
+  display: flex;
+  gap: 0;
+  margin: 8px 0 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+.season-tab {
+  flex: 1;
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.season-tab:hover { color: var(--text-primary); }
+.season-tab.active {
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
 }
 
 .filter-bar {

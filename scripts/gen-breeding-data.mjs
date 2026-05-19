@@ -8,10 +8,26 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const src = JSON.parse(readFileSync(join(ROOT, 'public/data/tables/PETBASE_CONF.json'), 'utf8'))
 const pets = Object.values(src.RocoDataRows)
 
+// PETBASE_CONF.unit_type 的 ID 映射(交叉验证 wiki + 解包样本得出,ID 1/7 未使用)
 const ELEMENT_MAP = {
-  1: 'normal', 2: 'grass', 3: 'fire', 4: 'water', 5: 'light', 6: 'ground',
-  7: 'ice', 8: 'dragon', 9: 'electric', 10: 'poison', 11: 'bug', 12: 'fighting',
-  13: 'flying', 14: 'cute', 15: 'ghost', 16: 'evil', 17: 'mechanical', 18: 'psychic',
+  2: 'normal',     // 普通
+  3: 'grass',      // 草
+  4: 'fire',       // 火
+  5: 'water',      // 水
+  6: 'light',      // 光
+  8: 'ground',     // 地
+  9: 'ice',        // 冰
+  10: 'dragon',    // 龙
+  11: 'electric',  // 电
+  12: 'poison',    // 毒
+  13: 'bug',       // 虫
+  14: 'fighting',  // 武
+  15: 'flying',    // 翼
+  16: 'cute',      // 萌
+  17: 'ghost',     // 幽
+  18: 'evil',      // 恶
+  19: 'mechanical',// 机械
+  20: 'psychic',   // 幻
 }
 
 // 扫 aoe-top friends 目录找出所有有异色立绘的 py

@@ -246,6 +246,30 @@ export const SHINY_PETS = [
     img: `${W}/0/00/gknyb1qbbno2vnvcvyb4p9a0o9y1owp.png`,
     imgShiny: `${W}/f/f4/5h388zx35ucy5xhyt9gunoqhjygggrx.png`,
   },
+
+  // ===== S2 常驻异色（8 种，解包数据有普通立绘 无异色立绘，UI 自动回退到普通图）=====
+  { id: 's2-ddb',  season: 'S2', name: '嘟嘟煲',   element: ['poison'],          evolutionLine: ['嘟嘟煲'],   area: '各区域庇护所', category: 'permanent',   huntTip: '' },
+  { id: 's2-yys',  season: 'S2', name: '幽影树',   element: ['ghost', 'grass'],  evolutionLine: ['幽影树'],   area: '各区域庇护所', category: 'permanent',   huntTip: '' },
+  { id: 's2-emd',  season: 'S2', name: '恶魔叮',   element: ['evil', 'flying'],  evolutionLine: ['恶魔叮'],   area: '各区域庇护所', category: 'permanent',   huntTip: '' },
+  { id: 's2-jhl',  season: 'S2', name: '菊花梨',   element: ['cute'],            evolutionLine: ['菊花梨'],   area: '各区域庇护所', category: 'permanent',   huntTip: '' },
+  { id: 's2-gpg',  season: 'S2', name: '公平鸽',   element: ['normal'],          evolutionLine: ['公平鸽'],   area: '各区域庇护所', category: 'permanent',   huntTip: '' },
+  { id: 's2-lh',   season: 'S2', name: '灵狐',     element: ['fire', 'ice'],     evolutionLine: ['灵狐'],     area: '各区域庇护所', category: 'permanent',   huntTip: '' },
+  { id: 's2-xy',   season: 'S2', name: '小夜',     element: ['evil'],            evolutionLine: ['小夜'],     area: '各区域庇护所', category: 'permanent',   huntTip: '' },
+  { id: 's2-xdjs', season: 'S2', name: '小独角兽', element: ['light'],           evolutionLine: ['小独角兽'], area: '各区域庇护所', category: 'permanent',   huntTip: '' },
+
+  // ===== S2 赛季限定异色（8 种，解包数据未完善 → 图先空着）=====
+  { id: 's2-xcgj', season: 'S2', name: '小丑豆豆', element: [], evolutionLine: ['小丑豆豆'], area: 'S2赛季庇护所', category: 'season', huntTip: '' },
+  { id: 's2-xgx',  season: 'S2', name: '小鼓象',   element: [], evolutionLine: ['小鼓象'],   area: 'S2赛季庇护所', category: 'season', huntTip: '' },
+  { id: 's2-ydh',  season: 'S2', name: '猴麦仔',   element: [], evolutionLine: ['猴麦仔'],   area: 'S2赛季庇护所', category: 'season', huntTip: '' },
+  { id: 's2-yhbj', season: 'S2', name: '烟花团',   element: [], evolutionLine: ['烟花团'],   area: 'S2赛季庇护所', category: 'season', huntTip: '' },
+  { id: 's2-ssmo', season: 'S2', name: '牵线木偶', element: [], evolutionLine: ['牵线木偶'], area: 'S2赛季庇护所', category: 'season', huntTip: '' },
+  { id: 's2-xgdd', season: 'S2', name: '炫光迪迪', element: [], evolutionLine: ['炫光迪迪'], area: 'S2赛季庇护所', category: 'season', huntTip: '' },
+  { id: 's2-jyhk', season: 'S2', name: '加油海葵', element: [], evolutionLine: ['加油海葵'], area: 'S2赛季庇护所', category: 'season', huntTip: '' },
+  { id: 's2-gdmm', season: 'S2', name: '咕咕帽',   element: [], evolutionLine: ['咕咕帽'],   area: 'S2赛季庇护所', category: 'season', huntTip: '' },
+
+  // ===== S2 战灵精灵（2 种，解包数据未完善 → 图先空着）=====
+  { id: 's2-byz', season: 'S2', name: '爆焰仔', element: [], evolutionLine: ['爆焰仔'], area: 'S2战灵', category: 'battlespirit', huntTip: '' },
+  { id: 's2-xxr', season: 'S2', name: '小雪人', element: [], evolutionLine: ['小雪人'], area: 'S2战灵', category: 'battlespirit', huntTip: '' },
 ]
 
 export const RESULT_TYPES = {
@@ -255,10 +279,11 @@ export const RESULT_TYPES = {
 }
 
 export const CATEGORY_LABELS = {
-  season:     'S1赛季限定',
-  permanent:  '常驻异色',
-  battlepass: 'S1高级战令',
-  collab:     '联动限定',
+  season:       '赛季限定',
+  permanent:    '常驻异色',
+  battlepass:   '高级战令',
+  battlespirit: '战灵精灵',
+  collab:       '联动限定',
 }
 
 // 庇护所果实组合参考
